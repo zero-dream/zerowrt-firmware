@@ -34,7 +34,7 @@ echo 'Successful: addSkbRecyclerConfig'
 echo ''
 
 # 添加固件通用配置
-cat "$GITHUB_WORKSPACE/config/Platform/GeneralConfig" >>"$WRT_ConfigPath"
+cat "$CI_ConfigPath/Platform/GeneralConfig" >>"$WRT_ConfigPath"
 
 # 添加高通平台配置
 if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
@@ -53,4 +53,4 @@ if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 fi
 
 # 添加设备平台配置
-cat "$GITHUB_WORKSPACE/config/Platform/$WRT_CONFIG" >>"$WRT_ConfigPath"
+cat "$CI_ConfigPath/Platform/$WRT_CONFIG" >>"$WRT_ConfigPath"

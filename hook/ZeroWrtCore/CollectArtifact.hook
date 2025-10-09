@@ -13,9 +13,9 @@ outputPath="$ZD_ArtifactUploadPath/Output" && mkdir -p "$outputPath"
 # OutputAnalyzeFile
 analyzePath="$outputPath/Analyze" && mkdir -p "$analyzePath"
 [[ -f "$WRT_ConfigPath" ]] && cp -a "$WRT_ConfigPath" "$analyzePath/$WRT_NAME-WrtConfig-$WRT_CONFIG-$ZD_DATE"
-[[ -f "$CI_ConfigPath/CoreConfig" ]] && cp -a "$CI_ConfigPath/CoreConfig" "$analyzePath/$WRT_NAME-CoreConfig-$WRT_CONFIG-$ZD_DATE"
-[[ -f "$CI_ConfigPath/VirtualConfig" ]] && cp -a "$CI_ConfigPath/VirtualConfig" "$analyzePath/$WRT_NAME-VirtualConfig-$WRT_CONFIG-$ZD_DATE"
-# [[ -f "$CI_ConfigPath/ParsedConfig" ]] && cp -a "$CI_ConfigPath/ParsedConfig" "$analyzePath/$WRT_NAME-ParsedConfig-$WRT_CONFIG-$ZD_DATE"
+[[ -f "$CI_VirtualPath/CoreConfig" ]] && cp -a "$CI_VirtualPath/CoreConfig" "$analyzePath/$WRT_NAME-CoreConfig-$WRT_CONFIG-$ZD_DATE"
+[[ -f "$CI_VirtualPath/VirtualConfig" ]] && cp -a "$CI_VirtualPath/VirtualConfig" "$analyzePath/$WRT_NAME-VirtualConfig-$WRT_CONFIG-$ZD_DATE"
+# [[ -f "$CI_VirtualPath/ParsedConfig" ]] && cp -a "$CI_VirtualPath/ParsedConfig" "$analyzePath/$WRT_NAME-ParsedConfig-$WRT_CONFIG-$ZD_DATE"
 
 # --------------------------------------------------
 

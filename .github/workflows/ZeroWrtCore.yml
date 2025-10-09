@@ -104,18 +104,18 @@ jobs:
           sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
           sudo -E systemctl daemon-reload
           sudo -E timedatectl set-timezone "Asia/Shanghai"
-          sudo bash "$GITHUB_WORKSPACE/script/CompileEnv.sh"
+          sudo bash "$CI_ScriptPath/CompileEnv.sh"
 
       - name: InitKeyValueEnv
         run: |
           source "$ZD_ScriptLibPath/setEnv.sh"
           source "$ZD_ScriptLibPath/createPath.sh"
           setEnv 'CI_Owner' "${GITHUB_REPOSITORY%%/*}"
-          setEnv 'CI_ConfigPath' "$(createTempPath 'ParseConfig:dir')"
+          setEnv 'CI_VirtualPath' "$(createTempPath 'ParseConfig:dir')"
           setEnv 'WRT_NAME' 'ZeroWrt'
           setEnv 'WRT_MARK' "$CI_Owner"
           setEnv 'WRT_INFO' "${WRT_SOURCE%%/*}"
-          setEnv 'WRT_TARGET' "$(grep -m 1 -oP '^CONFIG_TARGET_\K[\w]+(?=\=y)' $GITHUB_WORKSPACE/config/Platform/$WRT_CONFIG)"
+          setEnv 'WRT_TARGET' "$(grep -m 1 -oP '^CONFIG_TARGET_\K[\w]+(?=\=y)' $CI_ConfigPath/Platform/$WRT_CONFIG)"
           setEnv 'WRT_KVER' 'none'
           setEnv 'WRT_LIST' 'none'
           setEnv 'WRT_MainPath' "$GITHUB_WORKSPACE/$WRT_NAME"
@@ -178,7 +178,7 @@ jobs:
 
       - name: HandleConfig
         run: |
-          bash "$GITHUB_WORKSPACE/script/FirmwareConfig.sh"
+          bash "$CI_ScriptPath/FirmwareConfig.sh"
           # Hook
           source "$ZD_ScriptLibPath/hook.sh"
           hook 'ZeroWrtCore/HandleConfig'
@@ -187,8 +187,8 @@ jobs:
 
       - name: HandlePackage
         run: |
-          bash "$GITHUB_WORKSPACE/script/FirmwarePackage.sh"
-          bash "$GITHUB_WORKSPACE/script/FirmwareHandle.sh"
+          bash "$CI_ScriptPath/FirmwarePackage.sh"
+          bash "$CI_ScriptPath/FirmwareHandle.sh"
           # Hook
           source "$ZD_ScriptLibPath/hook.sh"
           hook 'ZeroWrtCore/HandlePackage'
@@ -197,7 +197,7 @@ jobs:
 
       - name: HandleSetting
         run: |
-          bash "$GITHUB_WORKSPACE/script/FirmwareSettings.sh"
+          bash "$CI_ScriptPath/FirmwareSettings.sh"
           # Hook
           source "$ZD_ScriptLibPath/hook.sh"
           hook 'ZeroWrtCore/HandleSetting'
@@ -206,7 +206,7 @@ jobs:
 
       - name: SortingConfig
         run: |
-          bash "$GITHUB_WORKSPACE/script/SortingConfig.sh"
+          bash "$CI_ScriptPath/SortingConfig.sh"
 
       - name: MakeDefconfig
         run: |

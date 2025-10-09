@@ -12,13 +12,13 @@ cd "$WRT_MainPath/"
 [[ -z "$ZeroDream_Secret" ]] && exit 0
 
 # 创建配置文件
-touch "$CI_ConfigPath/ParsedConfig"
+touch "$CI_VirtualPath/ParsedConfig"
 
 # 解析配置
-"$ZD_AppPath/ParseZeroWrtConfig-linux-amd64" \
-  --coreConfigPath "$CI_ConfigPath/CoreConfig" \
-  --virtualConfigPath "$CI_ConfigPath/VirtualConfig" \
-  >"$CI_ConfigPath/ParsedConfig"
+"$CI_AppPath/ParseZeroWrtConfig-linux-amd64" \
+  --coreConfigPath "$CI_VirtualPath/CoreConfig" \
+  --virtualConfigPath "$CI_VirtualPath/VirtualConfig" \
+  >"$CI_VirtualPath/ParsedConfig"
 (($? != 0)) && [[ "$ZD_Owner" == "$CI_Owner" ]] && exit 2
 
 # --------------------------------------------------
