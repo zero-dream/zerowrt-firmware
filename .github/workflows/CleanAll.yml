@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       CONFIRM:
-        description: '确认是否清理所有数据'
+        description: '确认清理所有数据'
         required: true
         type: boolean
         default: false
@@ -21,14 +21,22 @@ on:
 env:
   # GITHUB ENV
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  # CI ENV
+  CI_Confirm: ${{inputs.CONFIRM}}
 
 # CI 任务
 jobs:
   clean-release:
     name: CleanAll
-    if: ${{inputs.CONFIRM}} == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: IsConfirm
+        run: |
+          if [[ "$CI_Confirm" == 'false' ]]; then
+            echo 'Error: Please confirm deletion'
+            exit 1
+          fi
+
       - name: CheckoutProject
         uses: actions/checkout@main
 
