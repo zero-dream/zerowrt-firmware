@@ -37,24 +37,20 @@ jobs:
             exit 1
           fi
 
-      - name: Del
-        run: |
-          echo 'del...'
+      - name: CheckoutProject
+        uses: actions/checkout@main
 
-      # - name: CheckoutProject
-      #   uses: actions/checkout@main
+      - name: DeleteReleasesAndWorkflowsRun
+        uses: ophub/delete-releases-workflows@main
+        with:
+          gh_token: ${{secrets.GITHUB_TOKEN}}
+          delete_tags: true
+          delete_releases: true
+          releases_keep_latest: 0
+          releases_keep_keyword: ''
+          delete_workflows: true
+          workflows_keep_day: 0
+          workflows_keep_keyword: ''
 
-      # - name: DeleteReleasesAndWorkflowsRun
-      #   uses: ophub/delete-releases-workflows@main
-      #   with:
-      #     gh_token: ${{secrets.GITHUB_TOKEN}}
-      #     delete_tags: true
-      #     delete_releases: true
-      #     releases_keep_latest: 0
-      #     releases_keep_keyword: ''
-      #     delete_workflows: true
-      #     workflows_keep_day: 0
-      #     workflows_keep_keyword: ''
-
-      # - name: CacheClean
-      #   run: gh cache delete --all
+      - name: CacheClean
+        run: gh cache delete --all
