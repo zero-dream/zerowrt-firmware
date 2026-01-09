@@ -1,0 +1,32 @@
+# CI 项目
+name: clean-cache
+
+# CI 权限
+permissions: write-all
+
+# CI 计划
+on:
+  # 自动运行: 每周一早上 3 点
+  schedule:
+    - cron: 0 19 * * 0
+  # 手动运行
+  workflow_dispatch:
+  # 工作流调用
+  workflow_call:
+
+# CI 环境
+env:
+  # GITHUB ENV
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+# CI 任务
+jobs:
+  clean-cache:
+    name: clean-cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: CheckoutProject
+        uses: actions/checkout@main
+
+      - name: CacheClean
+        run: gh cache delete --all

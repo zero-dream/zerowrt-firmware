@@ -1,0 +1,24 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+# --------------------------------------------------
+
+# ! 由 ZeroDream 私有
+
+[[ -z "$ZeroDream_Secret" ]] && exit 0
+
+# PackFirmwareModule
+outputPath="$CI_TempPath/FirmwareModule" && mkdir -p "$outputPath"
+"$CI_AppPath/PackFirmwareModule-linux-amd64" \
+  --dataPath "$WRT_MainPath/bin" \
+  --configPath "$WRT_ConfigPath" \
+  --outputPath "$outputPath"
+(($? != 0)) && [[ "$ZD_Owner" == "$CI_Owner" ]] && exit 2
+
+# --------------------------------------------------
+
+exit 0

@@ -1,0 +1,18 @@
+# ! 由 ZeroDream 私有
+# 这里仅能添加内核配置，以模块的方式编译
+
+# --------------------------------------------------
+
+# 示例:
+# CONFIG_PACKAGE_kmod-*=m
+
+# --------------------------------------------------
+
+# Block Devices
+CONFIG_PACKAGE_kmod-iosched-bfq=m
+
+# Cryptographic API modules
+CONFIG_PACKAGE_kmod-crypto-xts=m
+
+# Network Support
+CONFIG_PACKAGE_kmod-tcp-bbr=m

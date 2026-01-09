@@ -1,0 +1,295 @@
+# CI 项目
+name: zerowrt-core
+
+# CI 计划
+on:
+  # 工作流调用
+  workflow_call:
+    inputs:
+      WRT_TEST:
+        required: true
+        type: boolean
+      WRT_ONLY_CONFIG:
+        required: true
+        type: boolean
+      WRT_CONFIG:
+        required: true
+        type: string
+      WRT_SOURCE:
+        required: true
+        type: string
+      WRT_BRANCH:
+        required: true
+        type: string
+      WRT_REPO:
+        required: true
+        type: string
+      WRT_THEME:
+        required: true
+        type: string
+      WRT_HOST:
+        required: true
+        type: string
+      WRT_SSID:
+        required: true
+        type: string
+      WRT_WORD:
+        required: true
+        type: string
+      WRT_IP:
+        required: true
+        type: string
+      WRT_PW:
+        required: true
+        type: string
+
+# CI 环境
+env:
+  # GITHUB ENV
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  # WRT ENV
+  WRT_TEST: ${{inputs.WRT_TEST}}
+  WRT_ONLY_CONFIG: ${{inputs.WRT_ONLY_CONFIG}}
+  WRT_CONFIG: ${{inputs.WRT_CONFIG}}
+  WRT_SOURCE: ${{inputs.WRT_SOURCE}}
+  WRT_BRANCH: ${{inputs.WRT_BRANCH}}
+  WRT_REPO: ${{inputs.WRT_REPO}}
+  WRT_THEME: ${{inputs.WRT_THEME}}
+  WRT_HOST: ${{inputs.WRT_HOST}}
+  WRT_SSID: ${{inputs.WRT_SSID}}
+  WRT_WORD: ${{inputs.WRT_WORD}}
+  WRT_IP: ${{inputs.WRT_IP}}
+  WRT_PW: ${{inputs.WRT_PW}}
+
+# CI 任务
+jobs:
+  core:
+    name: ${{inputs.WRT_SOURCE}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: FreeDiskSpace
+        if: env.WRT_ONLY_CONFIG == 'false'
+        uses: endersonmenezes/free-disk-space@v2
+        with:
+          remove_android: true
+          remove_dotnet: true
+          remove_haskell: true
+          remove_tool_cache: true
+          remove_swap: true
+          remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
+          remove_packages_one_command: true
+          remove_folders: "/usr/share/swift /usr/share/miniconda /usr/share/az* /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell /usr/local/julia /usr/local/aws-cli /usr/local/aws-sam-cli /usr/share/gradle"
+          testing: false
+
+      - name: CheckoutProject
+        uses: actions/checkout@main
+
+      - name: InitWorkflow
+        run: |
+          WorkflowPath="$RUNNER_TEMP/Workflow-$(uuidgen | tr -d '-')"
+          git clone --depth=1 https://github.com/zero-dream/action-workflow.git "$WorkflowPath/"
+          chmod +x "$WorkflowPath/zerodream/main/init.sh"
+          source "$WorkflowPath/zerodream/main/init.sh"
+          # --------------------------------------------------
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/InitWorkflow'
+
+      - name: InitCompileEnv
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo -E apt -yqq purge firefox
+          sudo -E apt -yqq update
+          sudo -E apt -yqq full-upgrade
+          sudo -E apt -yqq autoremove --purge
+          sudo -E apt -yqq autoclean
+          sudo -E apt -yqq clean
+          sudo -E apt -yqq install python3-netifaces libfuse-dev
+          sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+          sudo -E systemctl daemon-reload
+          sudo -E timedatectl set-timezone "Asia/Shanghai"
+          sudo bash "$CI_ScriptPath/CompileEnv.sh"
+
+      - name: InitKeyValueEnv
+        run: |
+          source "$ZD_ScriptLibPath/setEnv.sh"
+          source "$ZD_ScriptLibPath/createPath.sh"
+          setEnv 'CI_Owner' "${GITHUB_REPOSITORY%%/*}"
+          setEnv 'CI_TempPath' "$(createTempPath 'CiTemp:dir')"
+          setEnv 'CI_VirtualPath' "$(createTempPath 'CiVirtual:dir')"
+          setEnv 'WRT_NAME' 'ZeroWrt'
+          setEnv 'WRT_MARK' "$CI_Owner"
+          setEnv 'WRT_INFO' "${WRT_SOURCE%%/*}"
+          setEnv 'WRT_TARGET' "$(grep -m 1 -oP '^CONFIG_TARGET_\K[\w]+(?=\=y)' $CI_ConfigPath/Platform/$WRT_CONFIG)"
+          setEnv 'WRT_KVER' 'none'
+          setEnv 'WRT_LIST' 'none'
+          setEnv 'WRT_MainPath' "$GITHUB_WORKSPACE/$WRT_NAME"
+          setEnv 'WRT_ConfigPath' "$WRT_MainPath/.config"
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/InitEnvVar'
+
+      - name: CloneCode
+        run: |
+          git clone --depth=1 --single-branch --branch $WRT_BRANCH $WRT_REPO "$WRT_MainPath/"
+          cd "$WRT_MainPath/" && echo "WRT_HASH=$(git log -1 --pretty=format:'%h')" >>$GITHUB_ENV
+          # GitHub Action 移除国内下载源
+          PROJECT_MIRRORS_FILE="$WRT_MainPath/scripts/projectsmirrors.json"
+          if [ -f "$PROJECT_MIRRORS_FILE" ]; then
+            sed -i '/.cn\//d; /tencent/d; /aliyun/d' "$PROJECT_MIRRORS_FILE"
+          fi
+
+      - name: CopyOpenwrtFile
+        run: |
+          cp -a "$GITHUB_WORKSPACE/openwrt/." "$WRT_MainPath/"
+
+      - name: CheckCache
+        id: check-cache
+        if: env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false'
+        uses: actions/cache@main
+        with:
+          key: ${{env.WRT_CONFIG}}-${{env.WRT_INFO}}-${{env.WRT_HASH}}
+          restore-keys: ${{env.WRT_CONFIG}}-${{env.WRT_INFO}}
+          path: |
+            ${{env.WRT_MainPath}}/.ccache
+            ${{env.WRT_MainPath}}/staging_dir/host*
+            ${{env.WRT_MainPath}}/staging_dir/tool*
+
+      - name: UpdateCache
+        if: env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false'
+        run: |
+          if [ -d "$WRT_MainPath/staging_dir" ]; then
+            find "$WRT_MainPath/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r DIR; do
+              find "$DIR" -type f -exec touch {} +
+            done
+            mkdir -p "$WRT_MainPath/tmp" && echo "1" > "$WRT_MainPath/tmp/.build"
+            echo "toolchain skiped done!"
+          else
+            echo "caches missed!"
+          fi
+          if ${{steps.check-cache.outputs.cache-hit != 'true'}}; then
+            CACHE_LIST=$(gh cache list --key "$WRT_CONFIG-$WRT_INFO" | cut -f 1)
+            for CACHE_KEY in $CACHE_LIST; do
+              gh cache delete $CACHE_KEY
+            done
+            echo "caches cleanup done!"
+          fi
+
+      - name: UpdateFeeds
+        run: |
+          cd "$WRT_MainPath/"
+          "$WRT_MainPath/scripts/feeds" update -a
+          "$WRT_MainPath/scripts/feeds" install -a
+
+      - name: HandleConfig
+        run: |
+          bash "$CI_ScriptPath/FirmwareConfig.sh"
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/HandleConfig'
+        env:
+          ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
+
+      - name: HandlePackage
+        run: |
+          bash "$CI_ScriptPath/FirmwarePackage.sh"
+          bash "$CI_ScriptPath/FirmwareHandle.sh"
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/HandlePackage'
+        env:
+          ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
+
+      - name: HandleSetting
+        run: |
+          bash "$CI_ScriptPath/FirmwareSettings.sh"
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/HandleSetting'
+        env:
+          ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
+
+      - name: SortingConfig
+        run: |
+          bash "$CI_ScriptPath/SortingConfig.sh"
+
+      - name: MakeDefconfig
+        run: |
+          cd "$WRT_MainPath/"
+          make defconfig -j$(nproc) && make clean -j$(nproc)
+
+      - name: MakeDownload
+        if: env.WRT_ONLY_CONFIG == 'false'
+        run: |
+          cd "$WRT_MainPath/"
+          make download -j$(nproc) || make download -j1 V=s
+
+      - name: CompileFirmware
+        if: env.WRT_ONLY_CONFIG == 'false'
+        run: |
+          cd "$WRT_MainPath/"
+          make -j$(nproc) || make -j1 V=s
+
+      - name: MachineInformation
+        run: |
+          cd "$WRT_MainPath/"
+          echo "===================="
+          lscpu | grep -E "name|Core|Thread"
+          echo "===================="
+          df -h
+          echo "===================="
+          du -h --max-depth=1
+          echo "===================="
+
+      - name: SetCompileEnv
+        run: |
+          cd "$WRT_MainPath/"
+          echo "WRT_KVER=$(find "$WRT_MainPath/bin/targets/" -type f -name "*.manifest" -exec grep -oP '^kernel - \K[\d\.]+' {} \;)" >>$GITHUB_ENV
+          echo "WRT_LIST=$(find "$WRT_MainPath/bin/targets/" -type f -name "*.manifest" -exec grep -oP '^luci-(app|theme)[^ ]*' {} \; | tr '\n' ' ')" >>$GITHUB_ENV
+
+      - name: HandleData
+        run: |
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/HandleData'
+        env:
+          ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
+
+      - name: CollectArtifact
+        run: |
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/CollectArtifact'
+          # CollectArtifact
+          if [[ "$WRT_ONLY_CONFIG" == 'true' ]]; then
+            cp -a "$WRT_ConfigPath" "$ZD_ArtifactUploadPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
+          fi
+
+      - name: CollectRelease
+        run: |
+          # SetEnv
+          source "$ZD_ScriptLibPath/setEnv.sh"
+          source "$ZD_ScriptLibPath/createPath.sh"
+          setEnv 'CI_ReleaseBodyPath' "$(createTempPath 'CiReleaseBody:file')"
+          # Hook
+          source "$ZD_ScriptLibPath/hook.sh"
+          hook 'ZeroWrtCore/CollectRelease'
+          # UploadReleaseBodyEnv
+          echo 'WRT_UploadReleaseBody<<EOF' >>$GITHUB_ENV
+          cat "$CI_ReleaseBodyPath" >>$GITHUB_ENV
+          echo 'EOF' >>$GITHUB_ENV
+
+      - name: UploadArtifact
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{env.WRT_NAME}}-Artifact-${{env.WRT_CONFIG}}-${{env.ZD_DATE}}
+          path: ${{env.ZD_ArtifactUploadPath}}/
+          retention-days: 1 # 保留附件天数，最大值为 90 天
+
+      - name: UploadRelease
+        if: env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false'
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{env.WRT_NAME}}-Firmware-${{env.WRT_CONFIG}}-${{env.ZD_DATE}}
+          files: ${{env.ZD_ReleaseUploadPath}}/**
+          body: ${{env.WRT_UploadReleaseBody}}

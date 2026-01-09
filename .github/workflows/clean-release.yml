@@ -1,0 +1,35 @@
+# CI 项目
+name: clean-release
+
+# CI 权限
+permissions: write-all
+
+# CI 计划
+on:
+  # 手动运行
+  workflow_dispatch:
+  # 工作流调用
+  workflow_call:
+
+# CI 环境
+env:
+  # GITHUB ENV
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+# CI 任务
+jobs:
+  clean-release:
+    name: clean-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: DeleteReleasesAndWorkflowsRun
+        uses: ophub/delete-releases-workflows@main
+        with:
+          gh_token: ${{secrets.GITHUB_TOKEN}}
+          delete_tags: true
+          delete_releases: true
+          releases_keep_latest: 8
+          releases_keep_keyword: ''
+          delete_workflows: true
+          workflows_keep_day: 1
+          workflows_keep_keyword: ''
