@@ -1,0 +1,56 @@
+# CI 项目
+name: clean-all
+
+# CI 权限
+permissions: write-all
+
+# CI 计划
+on:
+  # 手动运行
+  workflow_dispatch:
+    inputs:
+      CONFIRM:
+        description: '确认清理所有数据'
+        required: true
+        type: boolean
+        default: false
+  # 工作流调用
+  workflow_call:
+
+# CI 环境
+env:
+  # GITHUB ENV
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  # CI ENV
+  CI_Confirm: ${{inputs.CONFIRM}}
+
+# CI 任务
+jobs:
+  clean-release:
+    name: clean-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: IsConfirm
+        run: |
+          if [[ "$CI_Confirm" == 'false' ]]; then
+            echo 'Error: Please confirm deletion'
+            exit 1
+          fi
+
+      - name: CheckoutProject
+        uses: actions/checkout@main
+
+      - name: DeleteReleasesAndWorkflowsRun
+        uses: ophub/delete-releases-workflows@main
+        with:
+          gh_token: ${{secrets.GITHUB_TOKEN}}
+          delete_tags: true
+          delete_releases: true
+          releases_keep_latest: 0
+          releases_keep_keyword: ''
+          delete_workflows: true
+          workflows_keep_day: 0
+          workflows_keep_keyword: ''
+
+      - name: CacheClean
+        run: gh cache delete --all

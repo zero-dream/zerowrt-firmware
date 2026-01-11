@@ -1,0 +1,16 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+
+# --------------------------------------------------
+
+# Source
+source "$ZD_ScriptLibPath/setEnv.sh"
+
+# --------------------------------------------------
+
+# ZeroWrt Environment
+setEnv 'WRT_MODE' 'Firmware' # ??? Firmware|Package
+
+# --------------------------------------------------
+
+exit 0
