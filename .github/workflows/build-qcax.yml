@@ -1,0 +1,71 @@
+# CI 项目
+name: build-qcax
+
+# CI 权限
+permissions: write-all
+
+# CI 计划
+on:
+  # 自动运行: 每天早上 4 点
+  schedule:
+    - cron: 0 20 * * *
+  # 手动运行
+  workflow_dispatch:
+    inputs:
+      ONLY_CONFIG:
+        description: '是否仅生成配置'
+        required: true
+        type: boolean
+        default: false
+
+# CI 任务
+jobs:
+  build:
+    name: ${{matrix.CONFIG}}
+    # 矩阵
+    strategy:
+      fail-fast: false
+      matrix:
+        CONFIG: [
+          IPQ60XX-WiFi_NO,
+          IPQ60XX-WiFi_YES,
+          IPQ807X-WiFi_NO,
+          IPQ807X-WiFi_YES,
+        ]
+        SOURCE: [VIKINGYFY/immortalwrt]
+        BRANCH: [main]
+
+    # 调用公用编译核心
+    uses: ./.github/workflows/zerowrt-core.yml
+    secrets: inherit
+    with:
+      # 测试模式
+      WRT_TEST: false
+      # 是否仅生成配置
+      WRT_ONLY_CONFIG: ${{inputs.ONLY_CONFIG || false}} # 为自动编译设置默认值
+      # 编译配置
+      WRT_CONFIG: ${{matrix.CONFIG}}
+      # 源码名称
+      WRT_SOURCE: ${{matrix.SOURCE}}
+      # 源码分支
+      WRT_BRANCH: ${{matrix.BRANCH}}
+      # 源码链接
+      WRT_REPO: https://github.com/${{matrix.SOURCE}}.git
+      # 默认主题
+      WRT_THEME: argon
+      # 默认主机名
+      WRT_HOST: ZeroWrt
+      # 默认 WiFi 名称
+      WRT_SSID: ZeroWrt
+      # 默认 WiFi 密码
+      WRT_WORD: 12345678
+      # 默认地址
+      WRT_IP: 192.168.10.1
+      # 默认密码，仅供提示，修改无效
+      WRT_PW: 无
+
+  clean:
+    name: clean-release
+    if: ${{inputs.ONLY_CONFIG}} == 'false'
+    needs: [build]
+    uses: ./.github/workflows/clean-release.yml

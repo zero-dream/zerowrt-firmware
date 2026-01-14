@@ -1,0 +1,16 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+# https://github.com/zero-dream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+# --------------------------------------------------
+
+# ! ZeroDreamPrivate
+bash "$CI_PrivatePath/script/GenCoreConfig.sh"
+
+# --------------------------------------------------
+
+exit 0

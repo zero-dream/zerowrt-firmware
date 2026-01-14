@@ -1,0 +1,34 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+# https://github.com/zero-dream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+[[ -z "$ZeroDream_Secret" ]] && exit 0
+
+# --------------------------------------------------
+
+# 创建配置文件
+touch "$CI_VirtualPath/TempConfig"
+touch "$CI_VirtualPath/CoreConfig"
+
+# 备份配置
+cat "$WRT_ConfigPath" >"$CI_VirtualPath/TempConfig"
+
+# 生成初步的核心配置
+make defconfig -j$(nproc) && make clean -j$(nproc)
+cat "$WRT_ConfigPath" >"$CI_VirtualPath/CoreConfig"
+
+# 生成最终的核心配置
+coreConfig=$("$CI_AppPath/EnableLuciAppConfig-linux-amd64" --configPath "$CI_VirtualPath/CoreConfig")
+(($? != 0)) && [[ "$ZD_Owner" == "$CI_Owner" ]] && exit 2
+cat "$CI_VirtualPath/TempConfig" >"$WRT_ConfigPath" # 读取配置
+echo '# LuciApp' >>"$WRT_ConfigPath"
+echo "$coreConfig" >>"$WRT_ConfigPath"
+make defconfig -j$(nproc) && make clean -j$(nproc)
+cat "$WRT_ConfigPath" >"$CI_VirtualPath/CoreConfig"
+
+# 还原配置
+cat "$CI_VirtualPath/TempConfig" >"$WRT_ConfigPath"

@@ -1,0 +1,69 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+# https://github.com/zero-dream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+# --------------------------------------------------
+
+# CheckExit
+[[ "$WRT_ONLY_CONFIG" == 'true' ]] && exit 0
+
+# CollectPath
+collectPath="$ZD_ReleaseUploadPath"
+if [[ "$WRT_TEST" == 'true' ]]; then
+  releasePath="$ZD_ArtifactUploadPath/Release" && mkdir -p "$releasePath"
+  collectPath="$releasePath"
+fi
+
+# CollectRelease
+cp -f "$WRT_ConfigPath" "$collectPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
+tar -czvf "$collectPath/$WRT_NAME-OpenwrtBin-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+  --exclude='*.bin' \
+  --exclude='*.ubi' \
+  -C "$WRT_MainPath" \
+  'bin'
+tar -czvf "$collectPath/$WRT_NAME-OpenwrtModule-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+  -C "$CI_TempPath" \
+  'FirmwareModule'
+find "$WRT_MainPath/bin/targets/" \
+  -iregex ".*\(buildinfo\|json\|sha256sums\|packages\)$" \
+  -exec rm -rf {} +
+for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*"); do
+  EXT=$(basename $FILE | cut -d '.' -f 2-)
+  NAME=$(basename $FILE | cut -d '.' -f 1 | grep -io "\($WRT_TARGET\).*")
+  NEW_FILE="$WRT_NAME-$NAME-$ZD_DATE.$EXT"
+  mv -f $FILE "$collectPath/$NEW_FILE"
+done
+find "$WRT_MainPath/bin/targets/" -type f \
+  -exec mv -f {} "$collectPath/" \;
+
+# CheckExit
+[[ "$WRT_TEST" == 'true' ]] && exit 0
+
+# ReleaseBody
+cat > "$CI_ReleaseBodyPath" <<- EOF
+ZeroWrt 固件，由 ZeroDream 基于 ImmortalWrt 源码开发
+
+源码: $WRT_REPO
+分支: $WRT_BRANCH
+提交: $WRT_HASH
+
+配置: $WRT_CONFIG
+平台: $WRT_TARGET
+
+登录地址: $WRT_IP
+登录密码: $WRT_PW
+
+WIFI名称: $WRT_SSID
+WIFI密码: $WRT_WORD
+
+内核版本: $WRT_KVER
+插件列表: $WRT_LIST
+EOF
+
+# --------------------------------------------------
+
+exit 0
