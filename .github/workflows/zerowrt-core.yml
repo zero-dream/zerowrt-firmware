@@ -88,8 +88,8 @@ jobs:
         run: |
           WorkflowPath="$RUNNER_TEMP/Workflow-$(uuidgen | tr -d '-')"
           git clone --depth=1 https://github.com/zero-dream/action-workflow.git "$WorkflowPath/"
-          chmod +x "$WorkflowPath/zerodream/main/init.sh"
-          source "$WorkflowPath/zerodream/main/init.sh"
+          chmod +x "$WorkflowPath/zerodream/init/init.sh"
+          source "$WorkflowPath/zerodream/init/init.sh"
           # --------------------------------------------------
           source "$ZD_ScriptLibPath/hook.sh"
           hook 'ZeroWrtCore/InitWorkflow'
