@@ -11,12 +11,30 @@ echo ''
 
 # --------------------------------------------------
 
+# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest'
+
+# function addPackage() {
+# 	local name=$1
+# 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
+# }
+
+# packages=(
+# 	'luci-theme-argon'
+# 	'luci-app-argon-config'
+# )
+# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest'
+# for package in "${packages[@]}"; do
+# 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
+# done
+
+# --------------------------------------------------
+
 # 安装和更新软件包
 UPDATE_PACKAGE() {
-	local PKG_NAME=$1 # 包名
-	local PKG_REPO=$2 # 项目地址
-	local PKG_BRANCH=$3 # 项目分支
-	local PKG_SPECIAL=$4 # pkg/name (可选, pkg:从大杂烩中单独提取包名插件; name:重命名为包名;)
+	local PKG_NAME=$1               # 包名
+	local PKG_REPO=$2               # 项目地址
+	local PKG_BRANCH=$3             # 项目分支
+	local PKG_SPECIAL=$4            # pkg/name (可选, pkg:从大杂烩中单独提取包名插件; name:重命名为包名;)
 	local PKG_LIST=("$PKG_NAME" $5) # 第 5 个参数为自定义名称列表
 	local REPO_NAME=${PKG_REPO#*/}
 	# 删除本地可能存在的不同名称的软件包
@@ -29,7 +47,7 @@ UPDATE_PACKAGE() {
 			while read -r DIR; do
 				rm -rf "$DIR"
 				echo "Delete directory: $DIR"
-			done <<< "$FOUND_DIRS"
+			done <<<"$FOUND_DIRS"
 		else
 			echo "Not fonud directory: $NAME"
 		fi
@@ -50,7 +68,7 @@ UPDATE_PACKAGE() {
 # UPDATE_PACKAGE "open-app-filter" "destan19/OpenAppFilter" "master" "" "luci-app-appfilter oaf"
 # 这样会把原有的 open-app-filter, luci-app-appfilter, oaf 相关组件删除，不会出现 coremark 错误
 
-UPDATE_PACKAGE "argon" "sbwml/luci-theme-argon" "openwrt-25.12"
+# UPDATE_PACKAGE "argon" "sbwml/luci-theme-argon" "openwrt-25.12"
 UPDATE_PACKAGE "partexp" "sirpdboy/luci-app-partexp" "main"
 UPDATE_PACKAGE "diskman" "lisaac/luci-app-diskman" "master"
 UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "luci-app-timewol luci-app-wolplus"
@@ -68,7 +86,7 @@ UPDATE_PACKAGE "gecoosac" "lwb1978/openwrt-gecoosac" "main"
 
 # 更新软件包版本
 UPDATE_VERSION() {
-	local PKG_NAME=$1 # 软件包名
+	local PKG_NAME=$1          # 软件包名
 	local PKG_MARK=${2:-false} # 测试版 (可选, 默认:false;)
 	local PKG_FILES=$(find ./ ../feeds/packages/ -maxdepth 3 -type f -wholename "*/$PKG_NAME/Makefile")
 	if [ -z "$PKG_FILES" ]; then
