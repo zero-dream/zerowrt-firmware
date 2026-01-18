@@ -43,9 +43,13 @@
 
   ### U-Boot 下载
 
-  [高通: chenxin527/uboot-ipq60xx-emmc-build](https://github.com/chenxin527/uboot-ipq60xx-emmc-build)
+  [chenxin527/uboot-ipq60xx-emmc-build](https://github.com/chenxin527/uboot-ipq60xx-emmc-build)
 
-  [联发科: uboot/mediatek](https://drive.wrt.moe/uboot/mediatek)
+  [chenxin527/uboot-ipq60xx-nand-build](https://github.com/chenxin527/uboot-ipq60xx-nand-build)
+
+  [chenxin527/uboot-ipq60xx-nor-build](https://github.com/chenxin527/uboot-ipq60xx-nor-build)
+
+  [drive.wrt.moe/uboot/mediatek](https://drive.wrt.moe/uboot/mediatek)
 
   \--------------------------------------------------
 
