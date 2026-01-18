@@ -11,7 +11,7 @@ echo ''
 
 # --------------------------------------------------
 
-# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest'
+# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
 
 # function addPackage() {
 # 	local name=$1
@@ -21,7 +21,7 @@ echo ''
 packages=(
 	'luci-app-partexp'
 )
-repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest'
+repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
 for package in "${packages[@]}"; do
 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
 done
