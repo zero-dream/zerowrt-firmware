@@ -18,13 +18,27 @@ echo ''
 # 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
 # }
 
-# packages=(
-# 	'luci-app-partexp'
-# )
-# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
-# for package in "${packages[@]}"; do
-# 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
-# done
+packages=(
+	'luci-app-partexp'
+)
+repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
+for package in "${packages[@]}"; do
+	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
+done
+
+
+# 使用方法
+packages=(
+	'luci-theme-argon'
+	'luci-app-argon-config'
+	# ... more packages
+)
+wrtPath='./zerowrt' # 请替换为 wrt 编译路径
+repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
+for package in "${packages[@]}"; do
+	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$wrtPath/package/"
+done
+
 
 # --------------------------------------------------
 

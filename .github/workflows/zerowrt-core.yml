@@ -263,9 +263,7 @@ jobs:
           source "$ZD_ScriptLibPath/hook.sh"
           hook 'ZeroWrtCore/CollectArtifact'
           # CollectArtifact
-          if [[ "$WRT_ONLY_CONFIG" == 'true' ]]; then
-            cp -a "$WRT_ConfigPath" "$ZD_ArtifactUploadPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
-          fi
+          cp -a "$WRT_ConfigPath" "$ZD_ArtifactUploadPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
 
       - name: CollectRelease
         run: |
