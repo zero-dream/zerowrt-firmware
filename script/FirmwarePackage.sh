@@ -18,13 +18,13 @@ echo ''
 # 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
 # }
 
-packages=(
-	'luci-app-partexp'
-)
-repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
-for package in "${packages[@]}"; do
-	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
-done
+# packages=(
+# 	'luci-app-partexp'
+# )
+# repoUrl='https://github.com/zero-dream/zerowrt-repository/releases/latest/download'
+# for package in "${packages[@]}"; do
+# 	curl -L "$repoUrl/$package.tar.gz" | tar -xzv -C "$WRT_MainPath/package/"
+# done
 
 # --------------------------------------------------
 
@@ -120,5 +120,5 @@ UPDATE_VERSION() {
 # 调用示例
 # UPDATE_VERSION "软件包名" "测试版 (可选, 默认:false;)"
 
-UPDATE_VERSION "sing-box"
-UPDATE_VERSION "tailscale"
+# UPDATE_VERSION "sing-box"
+# UPDATE_VERSION "tailscale"
