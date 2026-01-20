@@ -19,17 +19,23 @@ if [[ "$WRT_TEST" == 'true' ]]; then
 fi
 
 # CollectRelease
-cp -f "$WRT_ConfigPath" "$collectPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
-tar -czvf "$collectPath/$WRT_NAME-OpenwrtBin-$WRT_CONFIG-$ZD_DATE.tar.gz" \
-  --exclude='*.bin' \
-  --exclude='*.ubi' \
-  -C "$WRT_MainPath" \
-  'bin'
-tar -czvf "$collectPath/$WRT_NAME-OpenwrtModule-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+cp -f "$WRT_ConfigPath" "01-$collectPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
+find "$WRT_MainPath/bin/targets/" \
+  -iregex '.*manifest$' \
+  -exec cp -f {} "02-$collectPath/$WRT_NAME-Manifest-$WRT_CONFIG-$ZD_DATE" +
+tar -czvf "03-$collectPath/$WRT_NAME-OpenwrtModule-$WRT_CONFIG-$ZD_DATE.tar.gz" \
   -C "$CI_TempPath" \
   'FirmwareModule'
+tar -czvf "04-$collectPath/$WRT_NAME-OpenwrtBin-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+  --exclude='*.bin' \
+  --exclude='*.ubi' \
+  --exclude='*.buildinfo' \
+  --exclude='*.manifest' \
+  --exclude='profiles.json' \
+  -C "$WRT_MainPath" \
+  'bin'
 find "$WRT_MainPath/bin/targets/" \
-  -iregex ".*\(buildinfo\|json\|sha256sums\|packages\)$" \
+  -iregex '.*\(buildinfo\|manifest\|json\|sha256sums\|packages\)$' \
   -exec rm -rf {} +
 for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*"); do
   EXT=$(basename $FILE | cut -d '.' -f 2-)
@@ -37,14 +43,13 @@ for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*");
   NEW_FILE="$WRT_NAME-$NAME-$ZD_DATE.$EXT"
   mv -f $FILE "$collectPath/$NEW_FILE"
 done
-find "$WRT_MainPath/bin/targets/" -type f \
-  -exec mv -f {} "$collectPath/" \;
+make clean -j$(nproc)
 
 # CheckExit
 [[ "$WRT_TEST" == 'true' ]] && exit 0
 
 # ReleaseBody
-cat > "$CI_ReleaseBodyPath" <<- EOF
+cat >"$CI_ReleaseBodyPath" <<-EOF
 ZeroWrt 固件，由 ZeroDream 基于 ImmortalWrt 源码开发
 
 源码: $WRT_REPO

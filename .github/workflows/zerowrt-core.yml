@@ -133,7 +133,7 @@ jobs:
 
       - name: CloneCode
         run: |
-          git clone --depth=1 --single-branch --branch $WRT_BRANCH $WRT_REPO "$WRT_MainPath/"
+          git clone --depth=1 --single-branch --branch "$WRT_BRANCH" "$WRT_REPO" "$WRT_MainPath/"
           cd "$WRT_MainPath/" && echo "WRT_HASH=$(git log -1 --pretty=format:'%h')" >>$GITHUB_ENV
           # GitHub Action 移除国内下载源
           PROJECT_MIRRORS_FILE="$WRT_MainPath/scripts/projectsmirrors.json"

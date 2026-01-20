@@ -16,7 +16,7 @@ echo ''
 touch "$WRT_ConfigPath"
 
 # 添加主题配置
-cat >> "$WRT_ConfigPath" <<EOF
+cat >>"$WRT_ConfigPath" <<EOF
 # Luci Theme
 CONFIG_PACKAGE_luci-theme-$WRT_THEME=y
 CONFIG_PACKAGE_luci-app-$WRT_THEME-config=y
@@ -25,7 +25,7 @@ echo 'Successful: addLuciThemeConfig'
 echo ''
 
 # 添加内存回收补丁配置
-cat >> "$WRT_ConfigPath" <<EOF
+cat >>"$WRT_ConfigPath" <<EOF
 # SKB Recycler
 CONFIG_KERNEL_SKB_RECYCLER=y
 CONFIG_KERNEL_SKB_RECYCLER_MULTI_CPU=y
@@ -45,10 +45,12 @@ if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	echo "CONFIG_PACKAGE_luci-app-sqm=y" >>"$WRT_ConfigPath"
 	echo "CONFIG_PACKAGE_sqm-scripts-nss=y" >>"$WRT_ConfigPath"
 	# 设置 NSS 版本
-	echo "CONFIG_NSS_FIRMWARE_VERSION_11_4=n" >> "$WRT_ConfigPath"
+	echo "CONFIG_NSS_FIRMWARE_VERSION_11_4=n" >>"$WRT_ConfigPath"
 	echo "CONFIG_NSS_FIRMWARE_VERSION_12_5=y" >>"$WRT_ConfigPath"
-  # 添加配置成功
-  echo 'Successful: addQualcommaxConfig'
+	# 其他调整
+	echo "CONFIG_PACKAGE_kmod-usb-serial-qualcomm=y" >>"$WRT_ConfigPath"
+	# 添加配置成功
+	echo 'Successful: addQualcommaxConfig'
 	echo ''
 fi
 

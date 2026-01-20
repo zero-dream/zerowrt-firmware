@@ -45,7 +45,6 @@ fi
 cd "$pkgPath"
 DM_FILE="./luci-app-diskman/applications/luci-app-diskman/Makefile"
 if [ -f "$DM_FILE" ]; then
-	sed -i 's/fs-ntfs/fs-ntfs3/g' $DM_FILE
 	sed -i '/ntfs-3g-utils /d' $DM_FILE
 	echo 'Fixed: diskman'
 	echo ''
@@ -107,7 +106,7 @@ COLLECTIONS_FILES=$(find ../feeds/luci/collections/ -type f -name "Makefile")
 if [ -n "$COLLECTIONS_FILES" ]; then
 	for COLLECTIONS_FILE in $COLLECTIONS_FILES; do
 		echo "$COLLECTIONS_FILE"
-    sed -i "/attendedsysupgrade/d" "$COLLECTIONS_FILE"
+		sed -i "/attendedsysupgrade/d" "$COLLECTIONS_FILE"
 	done
 	echo 'Delete: luci-app-attendedsysupgrade'
 	echo ''
@@ -121,12 +120,12 @@ if [ -d *"luci-theme-argon"* ]; then
 	cd ./luci-theme-argon/
 	sed -i "/font-weight:/ { /important/! { /\/\*/! s/:.*/: var(--font-weight);/ } }" $(find ./luci-theme-argon -type f -iname "*.css")
 	sed -i -e "s/primary '.*'/primary '#6c8eb0'/" \
-				 -e "s/dark_primary '.*'/dark_primary '#6c8eb0'/" \
-				 -e "s/'0.2'/'0.5'/" \
-				 -e "s/online_wallpaper '.*'/online_wallpaper 'bing'/" \
-				 -e "s/'600'/'normal'/" \
-				 -e "s/mode '.*'/mode 'normal'/" \
-				 ./luci-app-argon-config/root/etc/config/argon
+		-e "s/dark_primary '.*'/dark_primary '#6c8eb0'/" \
+		-e "s/'0.2'/'0.5'/" \
+		-e "s/online_wallpaper '.*'/online_wallpaper 'bing'/" \
+		-e "s/'600'/'normal'/" \
+		-e "s/mode '.*'/mode 'normal'/" \
+		./luci-app-argon-config/root/etc/config/argon
 	echo 'Fixed: theme-argon'
 	echo ''
 fi
@@ -141,7 +140,8 @@ if [ -d *"homeproxy"* ]; then
 	cd ./$HP_RULE/ && RES_VER=$(git log -1 --pretty=format:'%s' | grep -o "[0-9]*")
 	echo $RES_VER | tee china_ip4.ver china_ip6.ver china_list.ver gfw_list.ver
 	awk -F, '/^IP-CIDR,/{print $2 > "china_ip4.txt"} /^IP-CIDR6,/{print $2 > "china_ip6.txt"}' cncidr.txt
-	sed 's/^\.//g' direct.txt > china_list.txt ; sed 's/^\.//g' gfw.txt > gfw_list.txt
+	sed 's/^\.//g' direct.txt >china_list.txt
+	sed 's/^\.//g' gfw.txt >gfw_list.txt
 	mv -f ./{china_*,gfw_list}.{ver,txt} ../$HP_PATH/resources/
 	cd .. && rm -rf ./$HP_RULE/
 	echo 'Updated: homeproxy'
