@@ -23,10 +23,10 @@ cp -f "$WRT_ConfigPath" "01-$collectPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
 find "$WRT_MainPath/bin/targets/" \
   -iregex '.*manifest$' \
   -exec cp -f {} "02-$collectPath/$WRT_NAME-Manifest-$WRT_CONFIG-$ZD_DATE" +
-tar -czvf "03-$collectPath/$WRT_NAME-OpenwrtModule-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+tar -czf "03-$collectPath/$WRT_NAME-OpenwrtModule-$WRT_CONFIG-$ZD_DATE.tar.gz" \
   -C "$CI_TempPath" \
   'FirmwareModule'
-tar -czvf "04-$collectPath/$WRT_NAME-OpenwrtBin-$WRT_CONFIG-$ZD_DATE.tar.gz" \
+tar -czf "04-$collectPath/$WRT_NAME-OpenwrtBin-$WRT_CONFIG-$ZD_DATE.tar.gz" \
   --exclude='*.bin' \
   --exclude='*.ubi' \
   --exclude='*.buildinfo' \
