@@ -48,7 +48,7 @@ make clean -j$(nproc)
 # CheckExit
 [[ "$WRT_TEST" == 'true' ]] && exit 0
 
-# ReleaseBody
+# BodyRelease
 cat >"$CI_ReleaseBodyPath" <<-EOF
 ZeroWrt 固件，由 ZeroDream 基于 ImmortalWrt 源码开发
 
