@@ -82,7 +82,7 @@ UPDATE_PACKAGE() {
 
 # --------------------------------------------------
 
-# 更新软件包版本
+# 更新软件包到最新版本
 UPDATE_VERSION() {
 	local PKG_NAME=$1          # 软件包名
 	local PKG_MARK=${2:-false} # 测试版 (可选, 默认:false;)
@@ -93,12 +93,23 @@ UPDATE_VERSION() {
 	fi
 	echo -e "$PKG_NAME version update has started!"
 	for PKG_FILE in $PKG_FILES; do
-		local PKG_REPO=$(grep -Po "PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)" $PKG_FILE)
+		# 获取 SOURCE_URL 变量
+		local SOURCE_URL=$(grep -oP "PKG_SOURCE_URL:=.*" "$PKG_FILE")
+		echo "$SOURCE_URL" | grep -oP '\$\([^)]+\)' | while read -r match; do
+			local var=$(echo "$match" | grep -oP '\$\(\K[^)]+(?=\))')
+			local value=$(grep -oP "$var:=\K.*" "$PKG_FILE")
+			local SOURCE_URL="${SOURCE_URL/$match/$value}"
+		done
+		# 获取其他变量
+		local PKG_REPO=$(echo "$SOURCE_URL" | grep -oP "PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)")
+		echo "$PKG_REPO"
+		exit 1
+
 		local PKG_TAG=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease == $PKG_MARK)) | first | .tag_name")
-		local OLD_VER=$(grep -Po "PKG_VERSION:=\K.*" "$PKG_FILE")
-		local OLD_URL=$(grep -Po "PKG_SOURCE_URL:=\K.*" "$PKG_FILE")
-		local OLD_FILE=$(grep -Po "PKG_SOURCE:=\K.*" "$PKG_FILE")
-		local OLD_HASH=$(grep -Po "PKG_HASH:=\K.*" "$PKG_FILE")
+		local OLD_VER=$(grep -oP "PKG_VERSION:=\K.*" "$PKG_FILE")
+		local OLD_URL=$(grep -oP "PKG_SOURCE_URL:=\K.*" "$PKG_FILE")
+		local OLD_FILE=$(grep -oP "PKG_SOURCE:=\K.*" "$PKG_FILE")
+		local OLD_HASH=$(grep -oP "PKG_HASH:=\K.*" "$PKG_FILE")
 		local PKG_URL=$([[ "$OLD_URL" == *"releases"* ]] && echo "${OLD_URL%/}/$OLD_FILE" || echo "${OLD_URL%/}")
 		local NEW_VER=$(echo $PKG_TAG | sed -E 's/[^0-9]+/\./g; s/^\.|\.$//g')
 		local NEW_URL=$(echo $PKG_URL | sed "s/\$(PKG_VERSION)/$NEW_VER/g; s/\$(PKG_NAME)/$PKG_NAME/g")
@@ -119,6 +130,8 @@ UPDATE_VERSION() {
 # 调用示例
 # UPDATE_VERSION "软件包名" "测试版 (可选, 默认:false;)"
 
-UPDATE_VERSION "sing-box"
-UPDATE_VERSION "tailscale"
+# 看看这里怎么更新的逻辑
+
+# UPDATE_VERSION "sing-box"
+# UPDATE_VERSION "tailscale"
 UPDATE_VERSION "docker"
