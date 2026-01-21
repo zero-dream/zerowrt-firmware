@@ -94,15 +94,20 @@ UPDATE_VERSION() {
 	echo -e "$PKG_NAME version update has started!"
 	for PKG_FILE in $PKG_FILES; do
 		# 获取 SOURCE_URL 变量
+		echo '--------------------------------------------------'
 		local SOURCE_URL=$(grep -oP "PKG_SOURCE_URL:=.*" "$PKG_FILE")
+		echo "SOURCE_URL: $SOURCE_URL"
 		echo "$SOURCE_URL" | grep -oP '\$\([^)]+\)' | while read -r match; do
+			echo "match: $match"
 			local var=$(echo "$match" | grep -oP '\$\(\K[^)]+(?=\))')
+			echo "var: $var"
 			local value=$(grep -oP "$var:=\K.*" "$PKG_FILE")
+			echo "value: $value"
 			local SOURCE_URL="${SOURCE_URL/$match/$value}"
+			echo "SOURCE_URL: $SOURCE_URL"
 		done
 		# 获取其他变量
 		local PKG_REPO=$(echo "$SOURCE_URL" | grep -oP "PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)")
-		echo '--------------------------------------------------'
 		echo "$PKG_REPO"
 		echo '--------------------------------------------------'
 		local PKG_TAG=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease == $PKG_MARK)) | first | .tag_name")
