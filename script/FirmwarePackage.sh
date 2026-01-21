@@ -102,9 +102,9 @@ UPDATE_VERSION() {
 		done
 		# 获取其他变量
 		local PKG_REPO=$(echo "$SOURCE_URL" | grep -oP "PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)")
+		echo '--------------------------------------------------'
 		echo "$PKG_REPO"
-		exit 1
-
+		echo '--------------------------------------------------'
 		local PKG_TAG=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease == $PKG_MARK)) | first | .tag_name")
 		local OLD_VER=$(grep -oP "PKG_VERSION:=\K.*" "$PKG_FILE")
 		local OLD_URL=$(grep -oP "PKG_SOURCE_URL:=\K.*" "$PKG_FILE")
@@ -132,6 +132,8 @@ UPDATE_VERSION() {
 
 # 看看这里怎么更新的逻辑
 
-# UPDATE_VERSION "sing-box"
-# UPDATE_VERSION "tailscale"
+UPDATE_VERSION "sing-box"
+UPDATE_VERSION "tailscale"
 UPDATE_VERSION "docker"
+
+exit 1
