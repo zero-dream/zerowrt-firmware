@@ -5,7 +5,7 @@
 # --------------------------------------------------
 
 # Source
-source "$ZD_ScriptLibPath/setEnv.sh"
+source "$ZD_LibPath/setEnv.sh"
 
 # --------------------------------------------------
 

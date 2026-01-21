@@ -3,7 +3,7 @@
 # --------------------------------------------------
 
 # Source
-source "$ZD_ScriptLibPath/createPath.sh"
+source "$ZD_LibPath/createPath.sh"
 
 # --------------------------------------------------
 

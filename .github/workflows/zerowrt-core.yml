@@ -94,7 +94,7 @@ jobs:
 
       - name: InitRepository
         run: |
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/InitRepository'
 
       - name: InitCompileEnv
@@ -115,8 +115,8 @@ jobs:
 
       - name: InitKeyValueEnv
         run: |
-          source "$ZD_ScriptLibPath/setEnv.sh"
-          source "$ZD_ScriptLibPath/createPath.sh"
+          source "$ZD_LibPath/setEnv.sh"
+          source "$ZD_LibPath/createPath.sh"
           setEnv 'CI_Owner' "${GITHUB_REPOSITORY%%/*}"
           setEnv 'CI_PrivatePath' "$GITHUB_WORKSPACE/private"
           setEnv 'CI_TempPath' "$(createTempPath 'CiTemp:dir')"
@@ -130,7 +130,7 @@ jobs:
           setEnv 'WRT_MainPath' "$GITHUB_WORKSPACE/$WRT_NAME"
           setEnv 'WRT_ConfigPath' "$WRT_MainPath/.config"
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/InitEnvVar'
 
       - name: CloneCode
@@ -189,7 +189,7 @@ jobs:
         run: |
           bash "$CI_ScriptPath/FirmwareConfig.sh"
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/HandleConfig'
         env:
           ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
@@ -199,7 +199,7 @@ jobs:
           bash "$CI_ScriptPath/FirmwarePackage.sh"
           bash "$CI_ScriptPath/FirmwareHandle.sh"
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/HandlePackage'
         env:
           ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
@@ -208,7 +208,7 @@ jobs:
         run: |
           bash "$CI_ScriptPath/FirmwareSettings.sh"
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/HandleSetting'
         env:
           ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
@@ -254,7 +254,7 @@ jobs:
       - name: HandleData
         run: |
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/HandleData'
         env:
           ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
@@ -262,7 +262,7 @@ jobs:
       - name: CollectArtifact
         run: |
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/CollectArtifact'
           # CollectArtifact
           cp -a "$WRT_ConfigPath" "$ZD_ArtifactUploadPath/$WRT_NAME-Config-$WRT_CONFIG-$ZD_DATE"
@@ -270,11 +270,11 @@ jobs:
       - name: CollectRelease
         run: |
           # SetEnv
-          source "$ZD_ScriptLibPath/setEnv.sh"
-          source "$ZD_ScriptLibPath/createPath.sh"
+          source "$ZD_LibPath/setEnv.sh"
+          source "$ZD_LibPath/createPath.sh"
           setEnv 'CI_ReleaseBodyPath' "$(createTempPath 'CiReleaseBody:file')"
           # Hook
-          source "$ZD_ScriptLibPath/hook.sh"
+          source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/CollectRelease'
           # UploadReleaseBodyEnv
           echo 'CI_ReleaseBody<<EOF' >>$GITHUB_ENV
