@@ -96,20 +96,17 @@ UPDATE_VERSION() {
 		# 获取 SOURCE_URL 变量
 		echo '--------------------------------------------------'
 		local SOURCE_URL=$(grep -oP "PKG_SOURCE_URL:=.*" "$PKG_FILE")
-		echo "SOURCE_URL: $SOURCE_URL"
-		echo "$SOURCE_URL" | grep -oP '\$\([^)]+\)' | while read -r match; do
-			echo "match: $match"
+		while read -r match; do
 			local var=$(echo "$match" | grep -oP '\$\(\K[^)]+(?=\))')
-			echo "var: $var"
 			local value=$(grep -oP "$var:=\K.*" "$PKG_FILE")
-			echo "value: $value"
 			local SOURCE_URL="${SOURCE_URL/$match/$value}"
-			echo "SOURCE_URL: $SOURCE_URL"
-		done
-		# 获取其他变量
-		local PKG_REPO=$(echo "$SOURCE_URL" | grep -oP "PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)")
-		echo "$PKG_REPO"
+			echo "SOURCE_URL 内: $SOURCE_URL"
+		done < <(echo "$SOURCE_URL" | grep -oP '\$\([^)]+\)')
+		echo "SOURCE_URL 外: $SOURCE_URL"
+		local PKG_REPO=$(echo "$SOURCE_URL" | grep -oP 'PKG_SOURCE_URL:=https://.*github.com/\K[^/]+/[^/]+(?=.*)')
+		echo "PKG_REPO: $PKG_REPO"
 		echo '--------------------------------------------------'
+		# 获取其他变量
 		local PKG_TAG=$(curl -sL "https://api.github.com/repos/$PKG_REPO/releases" | jq -r "map(select(.prerelease == $PKG_MARK)) | first | .tag_name")
 		local OLD_VER=$(grep -oP "PKG_VERSION:=\K.*" "$PKG_FILE")
 		local OLD_URL=$(grep -oP "PKG_SOURCE_URL:=\K.*" "$PKG_FILE")
