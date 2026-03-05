@@ -1,0 +1,78 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+# https://github.com/zero-dream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+# --------------------------------------------------
+
+# CheckExit
+[[ "$WRT_ONLY_CONFIG" == 'true' ]] && exit 0
+
+# --------------------------------------------------
+
+# CollectRelease
+
+# CollectPath
+collectPath="$ZD_ReleaseUploadPath"
+if [[ "$WRT_TEST" == 'true' ]]; then
+  releasePath="$ZD_ArtifactUploadPath/Release" && mkdir -p "$releasePath"
+  collectPath="$releasePath"
+fi
+
+# PackModule
+packModulePath="$CI_TempPath/PackModule/module"
+[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/01-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zerowrt"
+
+# PackZeroWrtData
+packDataPath="$CI_TempPath/PackZeroWrtData/ZeroWrtData"
+[[ -e "$packDataPath" ]] && cp -a "$packDataPath" "$collectPath/02-$WRT_NAME-ZeroWrtData-$WRT_CONFIG-$ZD_Date.zerowrt"
+
+# PackPrivateData
+privateDataPath="$CI_TempPath/PackPrivateData/PrivateData"
+[[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/03-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_Date.zerowrt"
+
+# PackFirmware
+find "$WRT_MainPath/bin/targets/" \
+  -iregex '.*\(buildinfo\|manifest\|json\|sha256sums\|packages\)$' \
+  -exec rm -rf {} +
+for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*"); do
+  EXT=$(basename $FILE | cut -d '.' -f 2-)
+  NAME=$(basename $FILE | cut -d '.' -f 1 | grep -io "\($WRT_TARGET\).*")
+  NEW_FILE="$WRT_NAME-$NAME-$ZD_Date.$EXT"
+  mv -f $FILE "$collectPath/$NEW_FILE"
+done
+
+# MakeClean
+make clean -j$(nproc)
+
+# --------------------------------------------------
+
+# BodyRelease
+cat >"$CI_ReleaseBodyPath" <<-EOF
+ZeroWrt 固件，由 ZeroDream 基于 ImmortalWrt 源码开发
+
+注意: 请把固件和 01 02 03 开头的文件一起下载
+
+源码: $WRT_REPO
+分支: $WRT_BRANCH
+提交: $WRT_HASH
+
+配置: $WRT_CONFIG
+平台: $WRT_TARGET
+
+登录地址: $WRT_IP
+登录密码: $WRT_PW
+
+WIFI名称: $WRT_SSID
+WIFI密码: $WRT_WORD
+
+内核版本: $WRT_KVER
+插件列表: $WRT_LIST
+EOF
+
+# --------------------------------------------------
+
+exit 0

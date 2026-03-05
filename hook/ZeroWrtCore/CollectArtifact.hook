@@ -1,0 +1,11 @@
+#!/bin/bash
+# Copyright (C) 2000 ZeroDream
+# https://github.com/zero-dream
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+
+# --------------------------------------------------
+
+exit 0
