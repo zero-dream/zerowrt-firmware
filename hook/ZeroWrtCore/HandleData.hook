@@ -11,6 +11,7 @@ cd "$WRT_MainPath/"
 # ! ZeroDreamPrivate
 bash "$CI_PrivatePath/script/hook/PackZeroWrtModule.sh" || exit 2
 bash "$CI_PrivatePath/script/hook/PackZeroWrtData.sh" || exit 2
+bash "$CI_PrivatePath/script/hook/PackPrivateData.sh" || exit 2
 
 # --------------------------------------------------
 
