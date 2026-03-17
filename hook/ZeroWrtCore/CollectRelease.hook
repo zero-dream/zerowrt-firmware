@@ -22,8 +22,8 @@ if [[ "$WRT_TEST" == 'true' ]]; then
   collectPath="$releasePath"
 fi
 
-# PackModule
-packModulePath="$CI_TempPath/PackModule/module"
+# ZeroWrtModule
+packModulePath="$CI_TempPath/ZeroWrtModule/module"
 [[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/01-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zerowrt"
 
 # PackZeroWrtData
@@ -33,6 +33,10 @@ packDataPath="$CI_TempPath/PackZeroWrtData/ZeroWrtData"
 # PackPrivateData
 privateDataPath="$CI_TempPath/PackPrivateData/PrivateData"
 [[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/03-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_Date.zerowrt"
+
+# KernelModule
+kernelModule="$CI_TempPath/KernelModule/module"
+[[ -e "$kernelModule" ]] && cp -a "$kernelModule" "$collectPath/20-$WRT_NAME-KernelModule-$WRT_CONFIG-$ZD_Date.zip"
 
 # PackFirmware
 find "$WRT_MainPath/bin/targets/" \
