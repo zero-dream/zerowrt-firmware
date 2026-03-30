@@ -41,9 +41,6 @@ if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	# 取消 NSS 相关 Feed
 	echo "CONFIG_FEED_nss_packages=n" >>"$WRT_ConfigPath"
 	echo "CONFIG_FEED_sqm_scripts_nss=n" >>"$WRT_ConfigPath"
-	# 开启 sqm-nss 插件
-	echo "CONFIG_PACKAGE_luci-app-sqm=y" >>"$WRT_ConfigPath"
-	echo "CONFIG_PACKAGE_sqm-scripts-nss=y" >>"$WRT_ConfigPath"
 	# 设置 NSS 版本
 	echo "CONFIG_NSS_FIRMWARE_VERSION_11_4=n" >>"$WRT_ConfigPath"
 	echo "CONFIG_NSS_FIRMWARE_VERSION_12_5=y" >>"$WRT_ConfigPath"

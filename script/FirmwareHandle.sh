@@ -91,15 +91,6 @@ fi
 
 # --------------------------------------------------
 
-# 更新 Golang 为最新版
-cd "$pkgPath"
-rm -rf "$WRT_MainPath/feeds/packages/lang/golang"
-git clone https://github.com/sbwml/packages_lang_golang -b 25.x "$WRT_MainPath/feeds/packages/lang/golang"
-echo 'Updated: golang'
-echo ''
-
-# --------------------------------------------------
-
 # 删除 luci-app-attendedsysupgrade
 cd "$pkgPath"
 COLLECTIONS_FILES=$(find ../feeds/luci/collections/ -type f -name "Makefile")

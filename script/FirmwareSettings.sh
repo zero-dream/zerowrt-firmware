@@ -11,6 +11,11 @@ echo ''
 
 # --------------------------------------------------
 
+# Source
+source "$ZD_LibPath/setEnv.sh"
+
+# --------------------------------------------------
+
 # 修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 # 修改 immortalwrt.lan 关联 IP
@@ -51,6 +56,7 @@ sed -i "s/option DirectInterface '.*'/option DirectInterface ''/g" ./package/net
 if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	# 无 WiFi 配置调整 Q6 大小
 	if [[ "${WRT_CONFIG,,}" == *"wifi"* && "${WRT_CONFIG,,}" == *"no"* ]]; then
+		setEnv 'WRT_WIFI' 'wifi-no'
 		DTS_PATH="./target/linux/qualcommax/dts/"
 		find $DTS_PATH -type f ! -iname '*nowifi*' -exec sed -i 's/ipq\(6018\|8074\).dtsi/ipq\1-nowifi.dtsi/g' {} +
 		echo "Successful: qualcommax set up nowifi"

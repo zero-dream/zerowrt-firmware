@@ -45,7 +45,7 @@ find "$WRT_MainPath/bin/targets/" \
 for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*"); do
   EXT=$(basename $FILE | cut -d '.' -f 2-)
   NAME=$(basename $FILE | cut -d '.' -f 1 | grep -io "\($WRT_TARGET\).*")
-  NEW_FILE="$WRT_NAME-$NAME-$ZD_Date.$EXT"
+  NEW_FILE="$WRT_NAME-$WRT_BRANCH-$WRT_WIFI-$NAME-$ZD_Date.$EXT"
   mv -f $FILE "$collectPath/$NEW_FILE"
 done
 
