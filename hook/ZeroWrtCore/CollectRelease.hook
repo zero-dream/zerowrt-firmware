@@ -22,21 +22,21 @@ if [[ "$WRT_TEST" == 'true' ]]; then
   collectPath="$releasePath"
 fi
 
-# ZeroWrtModule
-packModulePath="$CI_TempPath/ZeroWrtModule/module"
-[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/01-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zerowrt"
-
 # PackZeroWrtData
 packDataPath="$CI_TempPath/PackZeroWrtData/ZeroWrtData"
-[[ -e "$packDataPath" ]] && cp -a "$packDataPath" "$collectPath/02-$WRT_NAME-ZeroWrtData-$WRT_CONFIG-$ZD_Date.zerowrt"
+[[ -e "$packDataPath" ]] && cp -a "$packDataPath" "$collectPath/01-$WRT_NAME-ZeroWrtData-$WRT_CONFIG-$ZD_Date"
 
 # PackPrivateData
 privateDataPath="$CI_TempPath/PackPrivateData/PrivateData"
-[[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/03-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_Date.zerowrt"
+[[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/02-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_Date"
+
+# ZeroWrtModule
+packModulePath="$CI_TempPath/ZeroWrtModule/module"
+[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/11-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zerowrt"
 
 # KernelModule
 kernelModule="$CI_TempPath/KernelModule/module"
-[[ -e "$kernelModule" ]] && cp -a "$kernelModule" "$collectPath/20-$WRT_NAME-KernelModule-$WRT_CONFIG-$ZD_Date.zip"
+[[ -e "$kernelModule" ]] && cp -a "$kernelModule" "$collectPath/12-$WRT_NAME-KernelModule-$WRT_CONFIG-$ZD_Date.zip"
 
 # PackFirmware
 find "$WRT_MainPath/bin/targets/" \
@@ -58,7 +58,11 @@ make clean -j$(nproc)
 cat >"$CI_ReleaseBodyPath" <<-EOF
 ZeroWrt 固件，由 ZeroDream 基于 ImmortalWrt 源码开发
 
-注意: 请把固件和 01 02 03 开头的文件一起下载
+注意: 为避免附件自动更新导致丢失，请将固件与下列文件一起下载
+01 ZeroWrtData: 编译产生的数据
+02 PrivateData: 闭源算法的数据
+11 ZeroWrtModule: ZeroWrt 内核模块
+12 KernelModule: 常用的内核模块
 
 源码: $WRT_REPO
 分支: $WRT_BRANCH
