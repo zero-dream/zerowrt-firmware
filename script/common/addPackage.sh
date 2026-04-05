@@ -9,9 +9,9 @@
 
 ZeroWrtRepo='zero-dream/zerowrt-repository'
 ZeroWrtIndexName='00-IndexList'
-ZeroWrtIndexList=''
 
 ZeroWrtPackages=()
+ZeroWrtIndexList=''
 
 function addPackage() {
 	local name=$1
