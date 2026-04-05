@@ -32,7 +32,7 @@ function updatePackage() {
 	if [[ ${#pkgArgs[@]} -ne 0 ]]; then
 		local appPath=$(getApp 'zerowrt-zerowrt-linux-amd64') || exit 1
 		"$appPath" updatepkg \
-			--wrtPath "$WRT_ConfigPath" \
+			--wrtPath "$WRT_MainPath" \
 			"${pkgArgs[@]}" \
 			--outputPath "$outputPath"
 	fi
