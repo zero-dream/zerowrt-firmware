@@ -32,7 +32,7 @@ privateDataPath="$CI_TempPath/PackPrivateData/PrivateData"
 
 # ZeroWrtModule
 packModulePath="$CI_TempPath/ZeroWrtModule/module"
-[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/11-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zerowrt"
+[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/11-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zmod"
 
 # KernelModule
 kernelModule="$CI_TempPath/KernelModule/module"
