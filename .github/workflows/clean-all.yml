@@ -10,10 +10,20 @@ on:
   workflow_dispatch:
     inputs:
       CONFIRM:
-        description: '确认清理所有数据'
+        description: '确认清理数据'
         required: true
         type: boolean
         default: false
+      RELEASES:
+        description: '[CleanReleases]'
+        required: true
+        type: boolean
+        default: true
+      CACHE:
+        description: '[CleanCache]'
+        required: true
+        type: boolean
+        default: true
   # 工作流调用
   workflow_call:
 
@@ -22,7 +32,9 @@ env:
   # GITHUB ENV
   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   # CI ENV
-  CI_Confirm: ${{inputs.CONFIRM}}
+  CI_CleanConfirm: ${{inputs.CONFIRM}}
+  CI_CleanReleases: ${{inputs.RELEASES}}
+  CI_CleanCache: ${{inputs.CACHE}}
 
 # CI 任务
 jobs:
@@ -32,7 +44,7 @@ jobs:
     steps:
       - name: IsConfirm
         run: |
-          if [[ "$CI_Confirm" == 'false' ]]; then
+          if [[ "$CI_CleanConfirm" == 'false' ]]; then
             echo 'Error: Please confirm deletion'
             exit 1
           fi
@@ -40,7 +52,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: DeleteReleasesAndWorkflowsRun
+      - name: DeleteReleases
+        if: env.CI_CleanReleases == 'true'
         uses: ophub/delete-releases-workflows@main
         with:
           gh_token: ${{secrets.GITHUB_TOKEN}}
@@ -52,5 +65,6 @@ jobs:
           workflows_keep_day: 0
           workflows_keep_keyword: ''
 
-      - name: CacheClean
+      - name: CleanCache
+        if: env.CI_CleanCache == 'true'
         run: gh cache delete --all
