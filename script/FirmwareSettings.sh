@@ -52,11 +52,15 @@ sed -i "s/option DirectInterface '.*'/option DirectInterface ''/g" ./package/net
 
 # --------------------------------------------------
 
+# 无 WIFI 配置标志
+if [[ "${WRT_CONFIG,,}" == *"wifi"* && "${WRT_CONFIG,,}" == *"no"* ]]; then
+	setEnv 'WRT_WIFI' 'wifi-no'
+fi
+
 # 高通平台调整
 if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	# 无 WiFi 配置调整 Q6 大小
 	if [[ "${WRT_CONFIG,,}" == *"wifi"* && "${WRT_CONFIG,,}" == *"no"* ]]; then
-		setEnv 'WRT_WIFI' 'wifi-no'
 		DTS_PATH="./target/linux/qualcommax/dts/"
 		find $DTS_PATH -type f ! -iname '*nowifi*' -exec sed -i 's/ipq\(6018\|8074\).dtsi/ipq\1-nowifi.dtsi/g' {} +
 		echo "Successful: qualcommax set up nowifi"

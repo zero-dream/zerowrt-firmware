@@ -27,8 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: [
-          MEDIATEK-01,
-          MEDIATEK-02,
+          MEDIATEK-WiFi_NO,
+          MEDIATEK-WiFi_YES,
           ROCKCHIP,
           X86,
         ]
