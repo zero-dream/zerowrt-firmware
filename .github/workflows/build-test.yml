@@ -19,8 +19,8 @@ on:
           - IPQ60XX-WiFi_YES
           - IPQ807X-WiFi_NO
           - IPQ807X-WiFi_YES
-          - MEDIATEK-01
-          - MEDIATEK-02
+          - MEDIATEK-WiFi_NO
+          - MEDIATEK-WiFi_YES
           - ROCKCHIP
           - X86
       SOURCE:
