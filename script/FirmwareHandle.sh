@@ -41,15 +41,6 @@ if [ -f "$RUST_FILE" ]; then
 	echo ''
 fi
 
-# 修复 DiskMan 编译失败
-cd "$pkgPath"
-DM_FILE="./luci-app-diskman/applications/luci-app-diskman/Makefile"
-if [ -f "$DM_FILE" ]; then
-	sed -i '/ntfs-3g-utils /d' $DM_FILE
-	echo 'Fixed: diskman'
-	echo ''
-fi
-
 # 修复 Tailscale 配置文件冲突
 cd "$pkgPath"
 TS_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/tailscale/Makefile")
@@ -65,41 +56,6 @@ COREMARK_FILE="$WRT_MainPath/feeds/packages/utils/coremark/Makefile"
 if [ -f "$COREMARK_FILE" ]; then
 	sed -i 's/mkdir \$(PKG_BUILD_DIR)\/\$(ARCH)/mkdir -p \$(PKG_BUILD_DIR)\/\$(ARCH)/g' "$COREMARK_FILE"
 	echo 'Fixed: coremark'
-	echo ''
-fi
-
-# 修复 99_netspeedtest 相关问题
-cd "$pkgPath"
-if [ -d *"luci-app-netspeedtest"* ]; then
-	cd ./luci-app-netspeedtest/
-	sed -i '$a\exit 0' ./netspeedtest/files/99_netspeedtest.defaults
-	sed -i 's/ca-certificates/ca-bundle/g' ./speedtest-cli/Makefile
-	echo "Fixed: netspeedtest"
-	echo ''
-fi
-
-# --------------------------------------------------
-
-# 临时修复 nss-firmware 校验不通过
-# cd "$pkgPath"
-# NSS_FIRMWARE_FILE="$WRT_MainPath/feeds/nss_packages/firmware/nss-firmware/Makefile"
-# if [ -f "$NSS_FIRMWARE_FILE" ]; then
-# 	sed -i 's/3ec87f221e8905d4b6b8b3d207b7f7c4666c3bc8db7c1f06d4ae2e78f863b8f4/881cbf75efafe380b5adc91bfb1f68add5e29c9274eb950bb1e815c7a3622807/g' "$NSS_FIRMWARE_FILE"
-# 	echo 'Fixed: nss-firmware'
-# 	echo ''
-# fi
-
-# --------------------------------------------------
-
-# 删除 luci-app-attendedsysupgrade
-cd "$pkgPath"
-COLLECTIONS_FILES=$(find ../feeds/luci/collections/ -type f -name "Makefile")
-if [ -n "$COLLECTIONS_FILES" ]; then
-	for COLLECTIONS_FILE in $COLLECTIONS_FILES; do
-		echo "$COLLECTIONS_FILE"
-		sed -i "/attendedsysupgrade/d" "$COLLECTIONS_FILE"
-	done
-	echo 'Delete: luci-app-attendedsysupgrade'
 	echo ''
 fi
 
@@ -131,6 +87,15 @@ if [ -d *"luci-app-aurora-config"* ]; then
 	echo ''
 fi
 
+# 修改 mini-diskmanager 菜单位置
+cd "$pkgPath"
+if [ -d *"luci-app-mini-diskmanager"* ]; then
+	cd ./luci-app-mini-diskmanager/
+	sed -i "s/services/system/g" ./luci-app-mini-diskmanager/root/usr/share/luci/menu.d/luci-app-mini-diskmanager.json
+	echo 'Fixed: mini-diskmanager'
+	echo ''
+fi
+
 # 预置 HomeProxy 数据
 cd "$pkgPath"
 if [ -d *"homeproxy"* ]; then
@@ -148,3 +113,28 @@ if [ -d *"homeproxy"* ]; then
 	echo 'Updated: homeproxy'
 	echo ''
 fi
+
+# --------------------------------------------------
+
+# 删除 luci-app-attendedsysupgrade
+cd "$pkgPath"
+COLLECTIONS_FILES=$(find ../feeds/luci/collections/ -type f -name "Makefile")
+if [ -n "$COLLECTIONS_FILES" ]; then
+	for COLLECTIONS_FILE in $COLLECTIONS_FILES; do
+		echo "$COLLECTIONS_FILE"
+		sed -i "/attendedsysupgrade/d" "$COLLECTIONS_FILE"
+	done
+	echo 'Delete: luci-app-attendedsysupgrade'
+	echo ''
+fi
+
+# --------------------------------------------------
+
+# 临时修复 nss-firmware 校验不通过
+# cd "$pkgPath"
+# NSS_FIRMWARE_FILE="$WRT_MainPath/feeds/nss_packages/firmware/nss-firmware/Makefile"
+# if [ -f "$NSS_FIRMWARE_FILE" ]; then
+# 	sed -i 's/3ec87f221e8905d4b6b8b3d207b7f7c4666c3bc8db7c1f06d4ae2e78f863b8f4/881cbf75efafe380b5adc91bfb1f68add5e29c9274eb950bb1e815c7a3622807/g' "$NSS_FIRMWARE_FILE"
+# 	echo 'Fixed: nss-firmware'
+# 	echo ''
+# fi
