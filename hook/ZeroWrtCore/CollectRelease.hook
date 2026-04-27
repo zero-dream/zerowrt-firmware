@@ -8,11 +8,6 @@ cd "$WRT_MainPath/"
 
 # --------------------------------------------------
 
-# CheckExit
-[[ "$WRT_ONLY_CONFIG" == 'true' ]] && exit 0
-
-# --------------------------------------------------
-
 # CollectRelease
 
 # CollectPath
