@@ -27,6 +27,11 @@ cat "$WRT_ConfigPath" >"$defaultConfigPath"
 # ! ZeroDreamPrivate
 [[ -f "$CI_VirtualPath/GetNotSetKmod" ]] && cat "$CI_VirtualPath/GetNotSetKmod" >>"$defaultConfigPath"
 [[ -f "$CI_VirtualPath/ParseConfig" ]] && cat "$CI_VirtualPath/ParseConfig" >>"$defaultConfigPath"
+if [[ "$WRT_BRANCH" == "main" ]]; then
+  cat "$CI_PrivatePath/config/AdjustMainConfig" >>"$defaultConfigPath"
+elif [[ "$WRT_BRANCH" == "owrt" ]]; then
+  cat "$CI_PrivatePath/config/AdjustOwrtConfig" >>"$defaultConfigPath"
+fi
 
 # 添加自定义配置
 cat "$CI_ConfigPath/CustomConfig" >>"$defaultConfigPath"
