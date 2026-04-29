@@ -6,9 +6,9 @@ permissions: write-all
 
 # CI 计划
 on:
-  # 自动运行: 每天早上 5 点
+  # 自动运行: 每天早上 04:30
   schedule:
-    - cron: 0 21 * * *
+    - cron: 30 20 * * *
   # 手动运行
   workflow_dispatch:
     inputs:
@@ -27,8 +27,6 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: [
-          MEDIATEK-WiFi_NO,
-          MEDIATEK-WiFi_YES,
           ROCKCHIP,
           X86,
         ]

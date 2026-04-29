@@ -6,7 +6,7 @@ permissions: write-all
 
 # CI 计划
 on:
-  # 自动运行: 每天早上 4 点
+  # 自动运行: 每天早上 04:00
   schedule:
     - cron: 0 20 * * *
   # 手动运行
