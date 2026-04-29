@@ -1,14 +1,14 @@
 # CI 项目
-name: build-qcax
+name: build-mtk
 
 # CI 权限
 permissions: write-all
 
 # CI 计划
 on:
-  # 自动运行: 每天早上 04:00
+  # 自动运行: 每天早上 05:00
   schedule:
-    - cron: 0 20 * * *
+    - cron: 0 21 * * *
   # 手动运行
   workflow_dispatch:
     inputs:
@@ -27,13 +27,11 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: [
-          IPQ60XX-WiFi_NO,
-          IPQ60XX-WiFi_YES,
-          IPQ807X-WiFi_NO,
-          IPQ807X-WiFi_YES,
+          MEDIATEK-WiFi_NO,
+          MEDIATEK-WiFi_YES,
         ]
         SOURCE: [zero-dream/zerowrt-immortalwrt]
-        BRANCH: [main]
+        BRANCH: [owrt]
     # 重用工作流文件
     uses: ./.github/workflows/zerowrt-core.yml
     secrets: inherit
