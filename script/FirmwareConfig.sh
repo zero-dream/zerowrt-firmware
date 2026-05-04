@@ -42,7 +42,6 @@ if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	echo "CONFIG_FEED_nss_packages=n" >>"$WRT_ConfigPath"
 	echo "CONFIG_FEED_sqm_scripts_nss=n" >>"$WRT_ConfigPath"
 	# 设置 NSS 版本
-	echo "CONFIG_NSS_FIRMWARE_VERSION_11_4=n" >>"$WRT_ConfigPath"
 	echo "CONFIG_NSS_FIRMWARE_VERSION_12_5=y" >>"$WRT_ConfigPath"
 	# 其他调整
 	echo "CONFIG_PACKAGE_kmod-usb-serial-qualcomm=y" >>"$WRT_ConfigPath"
