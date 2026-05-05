@@ -2,3 +2,8 @@
 # 对私有配置进行调整
 
 # --------------------------------------------------
+
+# 排除有问题的软件包
+# CONFIG_PACKAGE_kmod-ipsec is not set
+# CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-fibocom is not set
+# CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-quectel is not set
