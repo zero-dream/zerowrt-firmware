@@ -16,6 +16,11 @@ source "$ZD_LibPath/private/getApp.sh"
 
 # --------------------------------------------------
 
+# DeletePackages
+deletePackages=(
+  'feeds/packages/utils/exfatprogs/'
+)
+
 # UpdateMakeFile
 tempPath="$CI_TempPath/UpdateMakeFile" && mkdir -p "$tempPath"
 
@@ -38,7 +43,12 @@ appPath=$(getApp 'zerowrt-zerowrt-linux-amd64') || exit 1
 [[ $? -ne 0 ]] && exit 1
 
 # Copy
-[[ -e "$decryptPath/updated" ]] && cp -a "$decryptPath/updated/." "$WRT_MainPath/"
+if [[ -e "$decryptPath/updated" ]]; then
+  for delete in "${deletePackages[@]}"; do
+    rm -rf "$decryptPath/updated/$delete"
+  done
+  cp -a "$decryptPath/updated/." "$WRT_MainPath/"
+fi
 
 # DeletePath
 rm -rf "$tempPath"
