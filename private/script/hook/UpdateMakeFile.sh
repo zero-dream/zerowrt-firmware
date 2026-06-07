@@ -12,7 +12,7 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/private/getApp.sh"
+source "$ZD_LibPath/private/getLib.sh"
 
 # --------------------------------------------------
 
@@ -29,14 +29,14 @@ downloadPath="$tempPath/Download" && mkdir -p "$downloadPath"
 makefilePath="$downloadPath/makefile"
 
 gh release download \
-  --repo 'zero-dream/zerowrt-makefile' \
+  --repo "$ZD_Owner/zerowrt-makefile" \
   --pattern 'makefile' \
   --clobber \
   --dir "$downloadPath" || exit 1
 
 # ZipDecrypt
 decryptPath="$tempPath/Decrypt" && mkdir -p "$decryptPath"
-appPath=$(getApp 'zerowrt-zerowrt-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-zerowrt-linux-amd64') || exit 1
 "$appPath" zipcrypto decrypt \
   --dataPath "$makefilePath" \
   --outputPath "$decryptPath"

@@ -12,7 +12,7 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/private/getApp.sh"
+source "$ZD_LibPath/private/getLib.sh"
 
 # --------------------------------------------------
 
@@ -21,14 +21,14 @@ touch "$CI_VirtualPath/OriginalConfig"
 touch "$CI_VirtualPath/CoreConfig"
 
 # GenOriginalCfg
-appPath=$(getApp 'zerowrt-virtual-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1
 "$appPath" genoriginalcfg \
   --wrtCfgPath "$WRT_ConfigPath" \
   --originalCfgPath "$CI_VirtualPath/OriginalConfig"
 [[ $? -ne 0 ]] && exit 1
 
 # GenCoreCfg
-appPath=$(getApp 'zerowrt-virtual-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1
 "$appPath" gencorecfg \
   --wrtCfgPath "$WRT_ConfigPath" \
   --coreCfgPath "$CI_VirtualPath/CoreConfig"

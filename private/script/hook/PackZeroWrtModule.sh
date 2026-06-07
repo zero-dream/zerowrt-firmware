@@ -13,13 +13,13 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/private/getApp.sh"
+source "$ZD_LibPath/private/getLib.sh"
 
 # --------------------------------------------------
 
 # PackZeroWrtModule
 outputPath="$CI_TempPath/ZeroWrtModule" && mkdir -p "$outputPath"
-appPath=$(getApp 'zerowrt-virtual-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1
 "$appPath" packmodule \
   --isEncrypt=true \
   --dataPath "$WRT_MainPath/bin" \
@@ -29,7 +29,7 @@ appPath=$(getApp 'zerowrt-virtual-linux-amd64') || exit 1
 
 # PackKernelModule
 outputPath="$CI_TempPath/KernelModule" && mkdir -p "$outputPath"
-appPath=$(getApp 'zerowrt-virtual-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1
 "$appPath" packmodule \
   --isEncrypt=false \
   --dataPath "$WRT_MainPath/bin" \

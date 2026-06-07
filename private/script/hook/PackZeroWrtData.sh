@@ -13,7 +13,7 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/private/getApp.sh"
+source "$ZD_LibPath/private/getLib.sh"
 
 # --------------------------------------------------
 
@@ -33,7 +33,7 @@ tar -czf "$tempPath/CompileData.tar.gz" \
 # ... Add other files
 
 # ZipEncrypt
-appPath=$(getApp 'zerowrt-zerowrt-linux-amd64') || exit 1
+appPath=$(getLib 'zerowrt-zerowrt-linux-amd64') || exit 1
 "$appPath" zipcrypto encrypt \
   --dataPath "$tempPath/" \
   --outputPath "$outputPath/ZeroWrtData"

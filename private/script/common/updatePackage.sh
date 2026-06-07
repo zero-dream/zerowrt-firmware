@@ -3,7 +3,7 @@
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/private/getApp.sh"
+source "$ZD_LibPath/private/getLib.sh"
 
 # --------------------------------------------------
 
@@ -30,7 +30,7 @@ function updatePackage() {
 	done
 	local outputPath="$CI_TempPath/UpdatePkg" && mkdir -p "$outputPath"
 	if [[ ${#pkgArgs[@]} -ne 0 ]]; then
-		local appPath=$(getApp 'zerowrt-zerowrt-linux-amd64') || exit 1
+		local appPath=$(getLib 'zerowrt-zerowrt-linux-amd64') || exit 1
 		"$appPath" updatepkg \
 			--wrtPath "$WRT_MainPath" \
 			"${pkgArgs[@]}" \

@@ -7,7 +7,7 @@
 
 # --------------------------------------------------
 
-ZeroWrtRepo='zero-dream/zerowrt-repository'
+ZeroWrtRepo="$ZD_Owner/zerowrt-repository"
 ZeroWrtIndexName='00-IndexList'
 
 ZeroWrtPackages=()

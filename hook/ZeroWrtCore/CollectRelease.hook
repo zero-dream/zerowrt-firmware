@@ -19,19 +19,19 @@ fi
 
 # PackZeroWrtData
 packDataPath="$CI_TempPath/PackZeroWrtData/ZeroWrtData"
-[[ -e "$packDataPath" ]] && cp -a "$packDataPath" "$collectPath/01-$WRT_NAME-ZeroWrtData-$WRT_CONFIG-$ZD_Date"
+[[ -e "$packDataPath" ]] && cp -a "$packDataPath" "$collectPath/01-$WRT_NAME-ZeroWrtData-$WRT_CONFIG-$ZD_DateUTC"
 
 # PackPrivateData
 privateDataPath="$CI_TempPath/PackPrivateData/PrivateData"
-[[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/02-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_Date"
+[[ -e "$privateDataPath" ]] && cp -a "$privateDataPath" "$collectPath/02-$WRT_NAME-PrivateData-$WRT_CONFIG-$ZD_DateUTC"
 
 # ZeroWrtModule
 packModulePath="$CI_TempPath/ZeroWrtModule/module"
-[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/11-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_Date.zmod"
+[[ -e "$packModulePath" ]] && cp -a "$packModulePath" "$collectPath/11-$WRT_NAME-ZeroWrtModule-$WRT_CONFIG-$ZD_DateUTC.zmod"
 
 # KernelModule
 kernelModule="$CI_TempPath/KernelModule/module"
-[[ -e "$kernelModule" ]] && cp -a "$kernelModule" "$collectPath/12-$WRT_NAME-KernelModule-$WRT_CONFIG-$ZD_Date.zip"
+[[ -e "$kernelModule" ]] && cp -a "$kernelModule" "$collectPath/12-$WRT_NAME-KernelModule-$WRT_CONFIG-$ZD_DateUTC.zip"
 
 # PackFirmware
 find "$WRT_MainPath/bin/targets/" \
@@ -40,7 +40,7 @@ find "$WRT_MainPath/bin/targets/" \
 for FILE in $(find "$WRT_MainPath/bin/targets/" -type f -iname "*$WRT_TARGET*"); do
   EXT=$(basename $FILE | cut -d '.' -f 2-)
   NAME=$(basename $FILE | cut -d '.' -f 1 | grep -io "\($WRT_TARGET\).*")
-  NEW_FILE="$WRT_NAME-$WRT_BRANCH-$WRT_WIFI-$NAME-$ZD_Date.$EXT"
+  NEW_FILE="$WRT_NAME-$WRT_BRANCH-$WRT_WIFI-$NAME-$ZD_DateUTC.$EXT"
   mv -f $FILE "$collectPath/$NEW_FILE"
 done
 
