@@ -36,19 +36,5 @@ echo ''
 # 添加固件通用配置
 cat "$CI_ConfigPath/GeneralConfig" >>"$WRT_ConfigPath"
 
-# 添加高通平台配置
-if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
-	# 取消 NSS 相关 Feed
-	echo "CONFIG_FEED_nss_packages=n" >>"$WRT_ConfigPath"
-	echo "CONFIG_FEED_sqm_scripts_nss=n" >>"$WRT_ConfigPath"
-	# 设置 NSS 版本
-	echo "CONFIG_NSS_FIRMWARE_VERSION_12_5=y" >>"$WRT_ConfigPath"
-	# 其他调整
-	echo "CONFIG_PACKAGE_kmod-usb-serial-qualcomm=y" >>"$WRT_ConfigPath"
-	# 添加配置成功
-	echo 'Successful: addQualcommaxConfig'
-	echo ''
-fi
-
 # 添加设备平台配置
 cat "$CI_ConfigPath/Platform/$WRT_CONFIG" >>"$WRT_ConfigPath"

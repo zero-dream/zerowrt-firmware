@@ -12,26 +12,6 @@ echo ''
 
 # --------------------------------------------------
 
-# 修改 qca-nss-drv 启动顺序
-cd "$pkgPath"
-NSS_DRV="../feeds/nss_packages/qca-nss-drv/files/qca-nss-drv.init"
-if [ -f "$NSS_DRV" ]; then
-	sed -i 's/START=.*/START=85/g' $NSS_DRV
-	echo 'Fixed: qca-nss-drv'
-	echo ''
-fi
-
-# 修改 qca-nss-pbuf 启动顺序
-cd "$pkgPath"
-NSS_PBUF="./kernel/mac80211/files/qca-nss-pbuf.init"
-if [ -f "$NSS_PBUF" ]; then
-	sed -i 's/START=.*/START=86/g' $NSS_PBUF
-	echo 'Fixed: qca-nss-pbuf'
-	echo ''
-fi
-
-# --------------------------------------------------
-
 # 修复 Rust 编译失败
 cd "$pkgPath"
 RUST_FILE=$(find ../feeds/packages/ -maxdepth 3 -type f -wholename "*/rust/Makefile")
@@ -82,7 +62,7 @@ fi
 cd "$pkgPath"
 if [ -d *"luci-app-aurora-config"* ]; then
 	cd ./luci-app-aurora-config/
-	sed -i "s/nav_submenu_type '.*'/nav_submenu_type 'boxed-dropdown'/g" $(find ./root/usr/share/aurora/ -type f -name "*.template")
+	sed -i "s/nav_type '.*'/nav_type 'dropdown'/g" $(find ./root/usr/share/aurora/ -type f -name "*.template")	
 	echo 'Fixed: theme-aurora'
 	echo ''
 fi
