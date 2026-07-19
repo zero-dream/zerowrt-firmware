@@ -16,6 +16,8 @@ source "$ZD_LibPath/setEnv.sh"
 
 # --------------------------------------------------
 
+# 删除 AttendedSysupgrade
+sed -i "/attendedsysupgrade/d" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 # 修改默认主题
 sed -i "s/luci-theme-bootstrap/luci-theme-$WRT_THEME/g" $(find ./feeds/luci/collections/ -type f -name "Makefile")
 # 修改 immortalwrt.lan 关联 IP
@@ -35,10 +37,6 @@ elif [[ -f "$WIFI_UC" ]]; then
 	sed -i "s/ssid='.*'/ssid='$WRT_SSID'/g" $WIFI_UC
 	# 修改 WIFI 密码
 	sed -i "s/key='.*'/key='$WRT_WORD'/g" $WIFI_UC
-	# 修改 WIFI 地区
-	sed -i "s/country='.*'/country='CN'/g" $WIFI_UC
-	# 修改 WIFI 加密
-	sed -i "s/encryption='.*'/encryption='psk2+ccmp'/g" $WIFI_UC
 fi
 
 CFG_FILE="./package/base-files/files/bin/config_generate"

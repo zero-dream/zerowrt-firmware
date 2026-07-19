@@ -3,7 +3,7 @@
 # --------------------------------------------------
 
 cd "$WRT_MainPath/package/"
-pkgPath="$WRT_MainPath/package/"
+pkgPath="$WRT_MainPath/package"
 
 echo '--------------------------------------------------'
 echo 'FirmwarePackage.sh'
