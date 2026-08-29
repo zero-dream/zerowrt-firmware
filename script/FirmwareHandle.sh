@@ -71,7 +71,7 @@ if [ -d "$pkgPath/luci-app-mini-diskmanager" ]; then
 fi
 
 # 预置 HomeProxy 数据
-HP_DIR="$(find "$pkgPath" -maxdepth 1 -type d -name '*homeproxy*' -print -quit)"
+HP_DIR="$(find "$pkgPath" -maxdepth 3 -type d -iname '*homeproxy*' -print -quit 2>/dev/null)"
 if [ -n "$HP_DIR" ]; then
 	HP_RESOURCES="$HP_DIR/root/etc/homeproxy/resources"
 	HP_DASHBOARD="$HP_DIR/root/etc/homeproxy/dashboard"
