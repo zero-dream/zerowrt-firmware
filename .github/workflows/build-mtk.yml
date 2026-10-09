@@ -27,8 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: [
-          MEDIATEK-WiFi_NO,
-          MEDIATEK-WiFi_YES,
+          MEDIATEK-WIFI-NO,
+          MEDIATEK-WIFI-YES,
         ]
         SOURCE: [zero-dream/zerowrt-immortalwrt]
         BRANCH: [owrt]

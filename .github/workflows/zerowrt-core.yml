@@ -69,7 +69,6 @@ jobs:
     outputs:
       cache_prefix: ${{steps.initialize-values.outputs.cache_prefix}}
       cache_key: ${{steps.clone-code.outputs.cache_key}}
-      source_hash: ${{steps.clone-code.outputs.source_hash}}
     steps:
       - name: FreeDiskSpace
         if: env.WRT_ONLY_CONFIG == 'false'
@@ -112,11 +111,14 @@ jobs:
           sudo -E apt -yqq autoremove --purge
           sudo -E apt -yqq autoclean
           sudo -E apt -yqq clean
-          sudo -E apt -yqq install libfuse-dev
+          sudo -E apt -yqq install tar libfuse-dev
           sudo bash -c 'bash <(curl -sL https://build-scripts.immortalwrt.org/init_build_environment.sh)'
           sudo -E systemctl daemon-reload
           sudo -E timedatectl set-timezone "Asia/Shanghai"
-          sudo bash "$CI_ScriptPath/CompileEnv.sh"
+
+          sudo mkdir -p '/mnt/build_wrt'
+          sudo chown $USER:$USER '/mnt/build_wrt'
+          sudo ln -s '/mnt/build_wrt' "$WRT_MainPath/"
 
       - name: InitKeyValue
         id: initialize-values
@@ -132,13 +134,13 @@ jobs:
           setEnv 'CI_VirtualPath' "$(createTempPath 'CiVirtual:dir')"
           setEnv 'WRT_NAME' 'ZeroWrt'
           setEnv 'WRT_INFO' "${WRT_SOURCE%%/*}"
-          setEnv 'WRT_WIFI' 'wifi-yes'
+          setEnv 'WRT_WIFI' "$(grep -oE 'WIFI-(YES|NO)$' <<< "${WRT_CONFIG^^}" || echo 'none')"
           setEnv 'WRT_KVER' 'none'
           setEnv 'WRT_LIST' 'none'
           setEnv 'WRT_MainPath' "$GITHUB_WORKSPACE/$WRT_NAME"
           setEnv 'WRT_ConfigPath' "$WRT_MainPath/.config"
-          setEnv 'WRT_TARGET' "$(grep -m 1 -oP '^CONFIG_TARGET_\K[\w]+(?=\=y)' "$CI_ConfigPath/Platform/$WRT_CONFIG")"
-          setEnv 'WRT_SUBTARGET' "$(grep -m 1 -oP "^CONFIG_TARGET_${WRT_TARGET}_\K[\w]+(?=\=y)" "$CI_ConfigPath/Platform/$WRT_CONFIG")"
+          setEnv 'WRT_TARGET' "$(grep -m 1 -oP '^CONFIG_TARGET_\K[^=_]+(?=\=y)' "$CI_ConfigPath/$WRT_CONFIG")"
+          setEnv 'WRT_SUBTARGET' "$(grep -m 1 -oP "^CONFIG_TARGET_${WRT_TARGET}_\K[^=_]+(?=\=y)" "$CI_ConfigPath/$WRT_CONFIG")"
 
           WRT_CACHE_SOURCE=${WRT_SOURCE//\//-}
           WRT_CACHE_BRANCH=${WRT_BRANCH//\//-}
@@ -167,7 +169,6 @@ jobs:
           setEnv 'WRT_HASH' "$(git rev-parse HEAD)"
           setEnv 'WRT_CACHE_KEY' "$WRT_CACHE_PREFIX-$WRT_HASH"
           setOut 'cache_key' "$WRT_CACHE_PREFIX-$WRT_HASH"
-          setOut 'source_hash' "$WRT_HASH"
 
           # 删除指定下载源
           PROJECT_MIRRORS_FILE="$WRT_MainPath/scripts/projectsmirrors.json"
@@ -192,7 +193,9 @@ jobs:
             ${{env.WRT_MainPath}}/staging_dir/tool*
 
       - name: PrepareRestoredBuildCache
-        if: env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false' && steps.cache-restore.outputs.cache-matched-key != ''
+        if: >-
+          env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false' &&
+          steps.cache-restore.outputs.cache-matched-key != ''
         run: |
           find "$WRT_MainPath/staging_dir" -type d -name "stamp" -not -path "*target*" | while read -r DIR; do
             find "$DIR" -type f -exec touch {} +
@@ -216,7 +219,7 @@ jobs:
 
       - name: HandleConfig
         run: |
-          bash "$CI_ScriptPath/FirmwareConfig.sh"
+          bash "$CI_ScriptPath/InitConfig.sh"
           # Hook
           source "$ZD_LibPath/hook.sh"
           hook 'ZeroWrtCore/HandleConfig'
@@ -227,6 +230,7 @@ jobs:
       - name: HandlePackage
         run: |
           bash "$CI_ScriptPath/FirmwarePackage.sh"
+          bash "$CI_ScriptPath/FirmwareRepository.sh"
           bash "$CI_ScriptPath/FirmwareHandle.sh"
           # Hook
           source "$ZD_LibPath/hook.sh"
@@ -247,9 +251,9 @@ jobs:
           GH_TOKEN: ${{secrets.WORKFLOW_TOKEN}}
           ZeroDream_Secret: ${{secrets.ZERODREAM_SECRET}}
 
-      - name: SortingConfig
+      - name: SortConfig
         run: |
-          bash "$CI_ScriptPath/SortingConfig.sh"
+          bash "$CI_ScriptPath/SortConfig.sh"
 
       - name: MakeDefconfig
         run: |
@@ -268,23 +272,10 @@ jobs:
           cd "$WRT_MainPath/"
           make -j$(nproc) || make -j1 V=s
 
-      - name: CheckCacheSource
-        id: cache-source
-        if: env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false' && success()
-        run: |
-          source "$ZD_LibPath/setOut.sh"
-          REMOTE_HASH=$(git ls-remote "$WRT_REPO" "refs/heads/$WRT_BRANCH" | awk 'NR == 1 {print $1}')
-          if [ -n "$REMOTE_HASH" ] && [ "$REMOTE_HASH" = "$WRT_HASH" ]; then
-            setOut 'current' 'true'
-          else
-            setOut 'current' 'false'
-            echo "skip cache save: source branch is now ${REMOTE_HASH:-unknown}, built $WRT_HASH"
-          fi
-
       - name: SaveBuildCache
         if: >-
-          env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false' && success() &&
-          steps.cache-source.outputs.current == 'true' && steps.cache-restore.outputs.cache-hit != 'true'
+          env.WRT_TEST == 'false' && env.WRT_ONLY_CONFIG == 'false' &&
+          success() && steps.cache-restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@main
         with:
           key: ${{env.WRT_CACHE_KEY}}
@@ -362,7 +353,9 @@ jobs:
   cache-rollover:
     name: RollCacheGenerations
     needs: core
-    if: inputs.WRT_TEST == 'false' && inputs.WRT_ONLY_CONFIG == 'false' && needs.core.result == 'success'
+    if: >-
+      inputs.WRT_TEST == 'false' && inputs.WRT_ONLY_CONFIG == 'false' &&
+      needs.core.result == 'success'
     runs-on: ubuntu-latest
     concurrency:
       group: wrt-cache-rollover-${{github.ref}}-${{needs.core.outputs.cache_prefix}}
@@ -370,32 +363,12 @@ jobs:
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GH_REPO: ${{github.repository}}
-      WRT_BRANCH: ${{inputs.WRT_BRANCH}}
-      WRT_REPO: ${{inputs.WRT_REPO}}
       WRT_CACHE_PREFIX: ${{needs.core.outputs.cache_prefix}}
       WRT_CACHE_KEY: ${{needs.core.outputs.cache_key}}
-      WRT_SOURCE_HASH: ${{needs.core.outputs.source_hash}}
     steps:
       - name: RollBuildCache
         run: |
           set -euo pipefail
-
-          delete_cache_key() {
-            local exact_key="$1"
-            gh cache list --repo "$GH_REPO" --key "$exact_key" --ref "$GITHUB_REF" --limit 100 --json id,key --jq '.[] | [.id, .key] | @tsv' |
-              while IFS=$'\t' read -r CACHE_ID CACHE_KEY; do
-                [ "$CACHE_KEY" = "$exact_key" ] || continue
-                gh cache delete "$CACHE_ID" --repo "$GH_REPO" ||
-                  echo "warning: failed to delete cache $CACHE_ID ($CACHE_KEY)"
-              done
-          }
-
-          REMOTE_HASH=$(git ls-remote "$WRT_REPO" "refs/heads/$WRT_BRANCH" | awk 'NR == 1 {print $1}')
-          if [ -z "$REMOTE_HASH" ] || [ "$REMOTE_HASH" != "$WRT_SOURCE_HASH" ]; then
-            echo "remove stale cache generation: source branch is now ${REMOTE_HASH:-unknown}, built $WRT_SOURCE_HASH"
-            delete_cache_key "$WRT_CACHE_KEY"
-            exit 0
-          fi
 
           CURRENT_CACHE_KEYS=$(gh cache list --repo "$GH_REPO" --key "$WRT_CACHE_KEY" --ref "$GITHUB_REF" --limit 100 --json key --jq '.[].key')
           CURRENT_CACHE_FOUND=0

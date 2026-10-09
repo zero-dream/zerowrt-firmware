@@ -13,26 +13,30 @@ on:
         description: 'CONFIG'
         required: true
         type: choice
-        default: 'IPQ60XX-WiFi_NO'
+        default: 'IPQ60XX-WIFI-NO'
         options:
-          - IPQ60XX-WiFi_NO
-          - IPQ60XX-WiFi_YES
-          - IPQ807X-WiFi_NO
-          - IPQ807X-WiFi_YES
-          - MEDIATEK-WiFi_NO
-          - MEDIATEK-WiFi_YES
+          - IPQ60XX-WIFI-NO
+          - IPQ60XX-WIFI-YES
+          - IPQ807X-WIFI-NO
+          - IPQ807X-WIFI-YES
+          - MEDIATEK-WIFI-NO
+          - MEDIATEK-WIFI-YES
           - ROCKCHIP
           - X86
       SOURCE:
         description: 'SOURCE'
         required: true
-        type: string
+        type: choice
         default: 'zero-dream/zerowrt-immortalwrt'
+        options:
+          - zero-dream/zerowrt-immortalwrt
+          - VIKINGYFY/immortalwrt
+          - immortalwrt/immortalwrt
       BRANCH:
         description: 'BRANCH'
         required: true
         type: string
-        default: 'main'
+        default: 'owrt'
       ONLY_CONFIG:
         description: '是否仅生成配置'
         required: true

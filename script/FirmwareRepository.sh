@@ -1,9 +1,20 @@
 #!/bin/bash
+# Copyright (C) 2026 ZeroDream
+# https://github.com/zero-dream
 
 # --------------------------------------------------
 
 # env:
 #   GH_TOKEN: ${{secrets.WORKFLOW_TOKEN}}
+
+# --------------------------------------------------
+
+cd "$WRT_MainPath/"
+PACKAGE_PATH="$WRT_MainPath/package"
+
+echo "$(printf -- '-%.0s' {1..50})"
+echo "Handle: $(basename "${BASH_SOURCE[0]}")"
+echo ''
 
 # --------------------------------------------------
 
@@ -53,7 +64,8 @@ function addAllPackage() {
 	done <<<"$ZeroWrtIndexList"
 }
 
-function curlPackage() {
+function downloadPackage() {
+  echo "Download List:"
 	for package in "${ZeroWrtPackages[@]}"; do
 		local pkgPath="$WRT_MainPath/package"
 		mkdir -p "$pkgPath"
@@ -61,5 +73,21 @@ function curlPackage() {
 			--repo "$ZeroWrtRepo" \
 			--pattern "$package.tar.gz" \
 			--output - | tar -xz -C "$pkgPath"
+    echo "  - $package"
 	done
+  echo ''
 }
+
+# --------------------------------------------------
+
+# addPackage 'luci-theme-argon'
+
+# --------------------------------------------------
+
+getRepoIndexList
+
+addAllPackage
+
+# --------------------------------------------------
+
+downloadPackage

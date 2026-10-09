@@ -1,12 +1,13 @@
 #!/bin/bash
+# Copyright (C) 2026 ZeroDream
+# https://github.com/zero-dream
 
 # --------------------------------------------------
 
 cd "$WRT_MainPath/"
 
-echo '--------------------------------------------------'
-echo 'SortingConfig.sh'
-echo "WRT_MainPath: $WRT_MainPath"
+echo "$(printf -- '-%.0s' {1..50})"
+echo "Handle: $(basename "${BASH_SOURCE[0]}")"
 echo ''
 
 # --------------------------------------------------
@@ -34,7 +35,7 @@ elif [[ "$WRT_BRANCH" == "owrt" ]]; then
 fi
 
 # 添加自定义配置
-cat "$CI_ConfigPath/CustomConfig" >>"$defaultConfigPath"
+cat "$CI_ConfigPath/Custom" >>"$defaultConfigPath"
 
 # 替换配置
 cat "$defaultConfigPath" >"$WRT_ConfigPath"

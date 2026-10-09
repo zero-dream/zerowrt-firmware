@@ -1,13 +1,13 @@
 #!/bin/bash
+# Copyright (C) 2026 ZeroDream
+# https://github.com/zero-dream
 
 # --------------------------------------------------
 
 cd "$WRT_MainPath/"
 
-echo '--------------------------------------------------'
-echo 'FirmwareCore.sh'
-echo "WRT_MainPath: $WRT_MainPath"
-echo "WRT_ConfigPath: $WRT_ConfigPath"
+echo "$(printf -- '-%.0s' {1..50})"
+echo "Handle: $(basename "${BASH_SOURCE[0]}")"
 echo ''
 
 # --------------------------------------------------
@@ -34,7 +34,7 @@ echo 'Successful: addSkbRecyclerConfig'
 echo ''
 
 # 添加固件通用配置
-cat "$CI_ConfigPath/GeneralConfig" >>"$WRT_ConfigPath"
+cat "$CI_ConfigPath/General" >>"$WRT_ConfigPath"
 
 # 添加设备平台配置
-cat "$CI_ConfigPath/Platform/$WRT_CONFIG" >>"$WRT_ConfigPath"
+cat "$CI_ConfigPath/$WRT_CONFIG" >>"$WRT_ConfigPath"
