@@ -12,12 +12,12 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/getLib.sh"
+source "$ZD_ScriptPath/getLib.sh"
 
 # --------------------------------------------------
 
 # TouchFile
-touch "$CI_VirtualPath/GetNotSetKmod"
+touch "$CI_VirtualPath/NotSetKmod"
 touch "$CI_VirtualPath/ParseConfig"
 
 # GetNotSetKmod
@@ -25,7 +25,7 @@ appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1
 notSetKmodOutput=$("$appPath" getnotsetkmod \
   --cfgPath "$CI_VirtualPath/OriginalConfig")
 [[ $? -ne 0 ]] && exit 1
-echo "$notSetKmodOutput" >"$CI_VirtualPath/GetNotSetKmod"
+echo "$notSetKmodOutput" >"$CI_VirtualPath/NotSetKmod"
 
 # ParseCfg
 appPath=$(getLib 'zerowrt-virtual-linux-amd64') || exit 1

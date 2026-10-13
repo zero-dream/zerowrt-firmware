@@ -6,9 +6,9 @@ permissions: write-all
 
 # CI 计划
 on:
-  # 自动运行: 每天早上 02:00
+  # 自动运行: 每天 00:00
   schedule:
-    - cron: 0 18 * * *
+    - cron: 0 16 * * *
   # 手动运行
   workflow_dispatch:
   # 工作流调用

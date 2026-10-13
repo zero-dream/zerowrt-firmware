@@ -16,7 +16,7 @@ echo ''
 # --------------------------------------------------
 
 # 安装和更新软件包
-UPDATE_PACKAGE() {
+function UPDATE_PACKAGE() {
 	local PKG_NAME=$1
 	local PKG_REPO=$2
 	local PKG_BRANCH=$3
@@ -25,6 +25,7 @@ UPDATE_PACKAGE() {
 	local REPO_NAME=${PKG_REPO#*/}
 	local REPO_PATH="$PACKAGE_PATH/$REPO_NAME"
 	# 删除本地可能存在的不同名称的软件包
+	local NAME DIR
 	for NAME in "${PKG_LIST[@]}"; do
 		# 查找匹配的目录
 		echo "Search directory: $NAME"
@@ -34,7 +35,7 @@ UPDATE_PACKAGE() {
 			while read -r DIR; do
 				rm -rf "$DIR"
 				echo "Delete directory: $DIR"
-			done <<< "$FOUND_DIRS"
+			done <<<"$FOUND_DIRS"
 		else
 			echo "Not fonud directory: $NAME"
 		fi
@@ -61,7 +62,7 @@ UPDATE_PACKAGE() {
 # --------------------------------------------------
 
 # 更新软件包到最新版本
-UPDATE_VERSION() {
+function UPDATE_VERSION() {
 	local PKG_NAME=$1
 	local PKG_MARK=${2:-false}
 	local PKG_FILES=$(find "$PACKAGE_PATH/" "$FEEDS_PATH/packages/" -maxdepth 3 -type f -wholename "*/$PKG_NAME/Makefile")
@@ -70,6 +71,7 @@ UPDATE_VERSION() {
 		return
 	fi
 	echo -e "$PKG_NAME version update has started!"
+	local PKG_FILE match
 	for PKG_FILE in $PKG_FILES; do
 		# 获取 PKG_REPO 变量
 		local SOURCE_URL=$(grep -oP "PKG_SOURCE_URL:=.*" "$PKG_FILE")

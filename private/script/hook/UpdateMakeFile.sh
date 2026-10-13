@@ -12,7 +12,7 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/getLib.sh"
+source "$ZD_ScriptPath/getLib.sh"
 
 # --------------------------------------------------
 

@@ -9,7 +9,7 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # ! ZeroDreamPrivate
-bash "$CI_PrivatePath/script/hook/ParseZeroWrtConfig.sh" || exit 2
+bash "$CI_PrivatePath/script/hook/GenCoreConfig.sh" || exit 2
 
 # --------------------------------------------------
 

@@ -9,8 +9,8 @@ cd "$WRT_MainPath/"
 # --------------------------------------------------
 
 # ! ZeroDreamPrivate
-bash "$CI_PrivatePath/script/hook/GenVirtualConfig.sh" || exit 2
 bash "$CI_PrivatePath/script/hook/UpdatePackage.sh" || exit 2
+bash "$CI_PrivatePath/script/hook/GenVirtualConfig.sh" || exit 2
 
 # --------------------------------------------------
 
