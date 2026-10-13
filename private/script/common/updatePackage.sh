@@ -5,7 +5,7 @@
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/getLib.sh"
+source "$ZD_ScriptPath/getLib.sh"
 
 # --------------------------------------------------
 
@@ -20,6 +20,7 @@ function addAllPackage() {
 	local repoPath="$CI_TempPath/ZeroWrtRepo"
 	local indexPath="$repoPath/IndexList"
 	local indexList=$(cat "$indexPath")
+	local line
 	while IFS= read -r line; do
 		addPackage "$line"
 	done <<<"$indexList"
@@ -27,6 +28,7 @@ function addAllPackage() {
 
 function updatePackage() {
 	local pkgArgs=()
+	local package
 	for package in "${ZeroWrtPackages[@]}"; do
 		pkgArgs+=(--pkgName "$package")
 	done

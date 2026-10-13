@@ -23,9 +23,9 @@ FIX() {
 	shift 2
 	[ -d "$GUARD" ] || return 0
 	if "$@"; then
-		echo "Fixed [PASS]: $NAME"
+		echo "Fix [PASS]: $NAME"
 	else
-		echo "Fixed [FAIL]: $NAME"
+		echo "Fix [FAIL]: $NAME"
 	fi
 	echo ''
 }

@@ -38,6 +38,7 @@ function findDeletePackage() {
 		-iname "*$name*" \
 		2>/dev/null)
 	if [[ -n "$findDirs" ]]; then
+		local dir
 		while read -r dir; do
 			rm -rf "$dir"
 			echo "Delete dir: $dir"
@@ -59,23 +60,25 @@ function getRepoIndexList() {
 }
 
 function addAllPackage() {
+	local line
 	while IFS= read -r line; do
 		addPackage "$line"
 	done <<<"$ZeroWrtIndexList"
 }
 
 function downloadPackage() {
-  echo "Download List:"
+	echo "Download List:"
+	local package pkgPath
 	for package in "${ZeroWrtPackages[@]}"; do
-		local pkgPath="$WRT_MainPath/package"
+		pkgPath="$WRT_MainPath/package"
 		mkdir -p "$pkgPath"
 		gh release download \
 			--repo "$ZeroWrtRepo" \
 			--pattern "$package.tar.gz" \
 			--output - | tar -xz -C "$pkgPath"
-    echo "  - $package"
+		echo "  - $package"
 	done
-  echo ''
+	echo ''
 }
 
 # --------------------------------------------------
@@ -87,7 +90,5 @@ function downloadPackage() {
 getRepoIndexList
 
 addAllPackage
-
-# --------------------------------------------------
 
 downloadPackage

@@ -13,32 +13,30 @@ echo ''
 # --------------------------------------------------
 
 # Source
-source "$ZD_LibPath/createPath.sh"
+source "$ZD_ScriptPath/createPath.sh"
 
 # --------------------------------------------------
 
 # ! 越重要配置越放在后面
 
-# 创建默认配置
-defaultConfigPath=$(createTempPath 'DefaultConfig:file')
+# 创建临时配置
+tempConfigPath=$(createTempPath 'DefaultConfig:file')
 
-# 添加 Wrt 配置
-cat "$WRT_ConfigPath" >"$defaultConfigPath"
+# 添加原有配置
+cat "$WRT_ConfigPath" >"$tempConfigPath"
 
 # ! ZeroDreamPrivate
-[[ -f "$CI_VirtualPath/GetNotSetKmod" ]] && cat "$CI_VirtualPath/GetNotSetKmod" >>"$defaultConfigPath"
-[[ -f "$CI_VirtualPath/ParseConfig" ]] && cat "$CI_VirtualPath/ParseConfig" >>"$defaultConfigPath"
-if [[ "$WRT_BRANCH" == "main" ]]; then
-  cat "$CI_PrivatePath/config/AdjustMainConfig" >>"$defaultConfigPath"
-elif [[ "$WRT_BRANCH" == "owrt" ]]; then
-  cat "$CI_PrivatePath/config/AdjustOwrtConfig" >>"$defaultConfigPath"
-fi
+[[ -f "$CI_VirtualPath/NotSetKmod" ]] && cat "$CI_VirtualPath/NotSetKmod" >>"$tempConfigPath"
+[[ -f "$CI_VirtualPath/ParseConfig" ]] && cat "$CI_VirtualPath/ParseConfig" >>"$tempConfigPath"
+
+# 排除部分配置
+cat "$CI_ConfigPath/Exclude" >>"$tempConfigPath"
 
 # 添加自定义配置
-cat "$CI_ConfigPath/Custom" >>"$defaultConfigPath"
+cat "$CI_ConfigPath/Custom" >>"$tempConfigPath"
 
 # 替换配置
-cat "$defaultConfigPath" >"$WRT_ConfigPath"
+cat "$tempConfigPath" >"$WRT_ConfigPath"
 
 # 删除文件
-rm -f "$defaultConfigPath/"
+rm -f "$tempConfigPath/"

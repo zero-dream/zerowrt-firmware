@@ -14,17 +14,13 @@ cd "$WRT_MainPath/"
 # Source
 source "$CI_PrivatePath/script/common/updatePackage.sh"
 
-# --------------------
+# --------------------------------------------------
 
 # addPackage 'tailscale'
 
-# ... other
-
-# --------------------
+# --------------------------------------------------
 
 addAllPackage
-
-# --------------------
 
 updatePackage
 
