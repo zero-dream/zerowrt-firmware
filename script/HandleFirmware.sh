@@ -53,3 +53,15 @@ FIX "mini-diskmanager" "$PACKAGE_PATH/luci-app-mini-diskmanager" sed -i "s/servi
 # 修改 Natmapt 菜单位置
 FIX "natmapt" "$PACKAGE_PATH/luci-app-natmapt" sed -i "s/network/services/g" \
 	"$PACKAGE_PATH/luci-app-natmapt/root/usr/share/luci/menu.d/luci-app-natmap.json"
+
+# --------------------------------------------------
+
+# 修复 ROCKCHIP 编译失败
+if [[ "$WRT_CONFIG" == 'ROCKCHIP' ]]; then
+	FIX "rockchip" "$WRT_MainPath/target/linux/rockchip/armv8" cat >>"$WRT_MainPath/target/linux/rockchip/armv8/config-6.18" <<-EOF
+		# CONFIG_CRASH_DM_CRYPT is not set
+		# CONFIG_CRYPTO_DEV_ROCKCHIP is not set
+		# CONFIG_CRYPTO_DEV_ROCKCHIP_DEBUG is not set
+	EOF
+	cat "$WRT_MainPath/target/linux/rockchip/armv8/config-6.18"
+fi
