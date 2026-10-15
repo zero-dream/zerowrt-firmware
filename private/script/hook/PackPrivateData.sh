@@ -23,15 +23,15 @@ outputPath="$CI_TempPath/PackPrivateData" && mkdir -p "$outputPath"
 tempPath="$outputPath/Temp" && mkdir -p "$tempPath"
 
 # WrtConfig
-cp -a "$WRT_ConfigPath" "$tempPath/$WRT_NAME-WrtConfig-$WRT_CONFIG-$ZD_DateUTC"
+cp -a "$WRT_ConfigPath" "$tempPath/$WRT_NAME-WrtConfig-$WRT_CONFIG-$ZD_DateShangHai"
 
 # OutputAnalyzeFile
 analyzePath="$tempPath/VirtualAnalyze" && mkdir -p "$analyzePath"
-[[ -e "$CI_VirtualPath/OriginalConfig" ]] && cp -a "$CI_VirtualPath/OriginalConfig" "$analyzePath/01-$WRT_NAME-OriginalConfig-$WRT_CONFIG-$ZD_DateUTC"
-[[ -e "$CI_VirtualPath/CoreConfig" ]] && cp -a "$CI_VirtualPath/CoreConfig" "$analyzePath/02-$WRT_NAME-CoreConfig-$WRT_CONFIG-$ZD_DateUTC"
-[[ -e "$CI_VirtualPath/VirtualConfig" ]] && cp -a "$CI_VirtualPath/VirtualConfig" "$analyzePath/03-$WRT_NAME-VirtualConfig-$WRT_CONFIG-$ZD_DateUTC"
-[[ -e "$CI_VirtualPath/NotSetKmod" ]] && cp -a "$CI_VirtualPath/NotSetKmod" "$analyzePath/04-$WRT_NAME-NotSetKmod-$WRT_CONFIG-$ZD_DateUTC"
-[[ -e "$CI_VirtualPath/ParseConfig" ]] && cp -a "$CI_VirtualPath/ParseConfig" "$analyzePath/05-$WRT_NAME-ParseConfig-$WRT_CONFIG-$ZD_DateUTC"
+[[ -e "$CI_VirtualPath/OriginalConfig" ]] && cp -a "$CI_VirtualPath/OriginalConfig" "$analyzePath/01-$WRT_NAME-OriginalConfig-$WRT_CONFIG-$ZD_DateShangHai"
+[[ -e "$CI_VirtualPath/CoreConfig" ]] && cp -a "$CI_VirtualPath/CoreConfig" "$analyzePath/02-$WRT_NAME-CoreConfig-$WRT_CONFIG-$ZD_DateShangHai"
+[[ -e "$CI_VirtualPath/VirtualConfig" ]] && cp -a "$CI_VirtualPath/VirtualConfig" "$analyzePath/03-$WRT_NAME-VirtualConfig-$WRT_CONFIG-$ZD_DateShangHai"
+[[ -e "$CI_VirtualPath/NotSetKmod" ]] && cp -a "$CI_VirtualPath/NotSetKmod" "$analyzePath/04-$WRT_NAME-NotSetKmod-$WRT_CONFIG-$ZD_DateShangHai"
+[[ -e "$CI_VirtualPath/ParseConfig" ]] && cp -a "$CI_VirtualPath/ParseConfig" "$analyzePath/05-$WRT_NAME-ParseConfig-$WRT_CONFIG-$ZD_DateShangHai"
 
 # UpdatePkgFile
 updatePkgPath="$tempPath/UpdatePkg" && mkdir -p "$updatePkgPath"
