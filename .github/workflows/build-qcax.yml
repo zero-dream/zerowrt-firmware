@@ -27,12 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: [
-          IPQ60XX-WIFI-NO,
-          IPQ60XX-WIFI-YES,
-          IPQ807X-WIFI-NO,
-          IPQ807X-WIFI-YES,
+          IPQ60XX-WIFI-NO
         ]
-        SOURCE: [zero-dream/zerowrt-immortalwrt]
+        SOURCE: [limi-l/zerowrt-immortalwrt]
         BRANCH: [owrt]
     # 重用工作流文件
     uses: ./.github/workflows/zerowrt-core.yml
