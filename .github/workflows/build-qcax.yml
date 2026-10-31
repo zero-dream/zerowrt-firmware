@@ -30,7 +30,7 @@ jobs:
           IPQ60XX-WIFI-NO
         ]
         SOURCE: [limi-l/zerowrt-immortalwrt]
-        BRANCH: [owrt]
+        BRANCH: [main]
     # 重用工作流文件
     uses: ./.github/workflows/zerowrt-core.yml
     secrets: inherit
