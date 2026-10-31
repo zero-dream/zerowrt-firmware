@@ -269,28 +269,28 @@ jobs:
         run: |
           cd "$WRT_MainPath/"
           make defconfig -j$(nproc) && make clean -j$(nproc)
+      
       - name: Enable Kernel BTF
         run: |
           cd "$WRT_MainPath/"
 
           echo "===== Enable BTF ====="
 
-          cat >> .config <<'EOF'
-      CONFIG_KERNEL_DEBUG_INFO=y
-      # CONFIG_KERNEL_DEBUG_INFO_REDUCED is not set
-      CONFIG_KERNEL_DEBUG_INFO_BTF=y
-      EOF
+          printf '%s\n' \
+            'CONFIG_KERNEL_DEBUG_INFO=y' \
+            '# CONFIG_KERNEL_DEBUG_INFO_REDUCED is not set' \
+            'CONFIG_KERNEL_DEBUG_INFO_BTF=y' >> .config
 
           make defconfig
 
           echo "===== Verify BTF Config ====="
-
           grep -E '^CONFIG_KERNEL_DEBUG_INFO|^# CONFIG_KERNEL_DEBUG_INFO_REDUCED' .config
 
           grep -q '^CONFIG_KERNEL_DEBUG_INFO_BTF=y$' .config || {
               echo "ERROR: BTF configuration was not enabled!"
               exit 1
           }
+
       - name: MakeDownload
         if: env.WRT_ONLY_CONFIG == 'false'
         run: |
