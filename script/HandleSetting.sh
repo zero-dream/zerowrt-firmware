@@ -58,7 +58,9 @@ if [[ -f "$imageFile" ]]; then
 	sed -i "/^define Device\/jdcloud_re-ss-01/,/^endef/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
 	sed -i "/^define Device\/jdcloud_re-cs-02/,/^endef/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
 	sed -i "/^define Device\/jdcloud_re-cs-07/,/^endef/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
-	sed -i "/^define Device\/redmi_ax5-jdcloud/,/^endef/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
+	# NN6000 V1/V2 和 LY1800、AX5 京东云版、Y6010 分别继承以下公共定义。
+	sed -i "/^define Device\/link_nn6000-common$/, /^endef$/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
+	sed -i "/^define Device\/emmc-common$/, /^endef$/ { /KERNEL_SIZE := 6144k/s//KERNEL_SIZE := 12288k/ }" "$imageFile"
 	echo 'Successful: modify kernel size'
 	echo ''
 fi
